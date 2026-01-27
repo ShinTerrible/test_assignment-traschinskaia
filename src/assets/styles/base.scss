@@ -1,0 +1,122 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --vt-c-white: #ffffff;
+  --vt-c-white-soft: #f8f8f8;
+  --vt-c-white-mute: #f2f2f2;
+
+  --vt-f-white: rgba(241, 244, 253, 1);
+  --vt-f-black: rgba(14, 14, 16, 1);
+  --vt-f-dark-grey: rgba(17, 24, 39, 1);
+
+  --vt-c-corp: rgba(51, 211, 94, 1);
+  --vt-c-corp-hovered: rgba(36, 193, 78, 1);
+  --vt-c-corp-pressed: rgba(22, 178, 64, 1);
+  --vt-c-black: rgba(14, 14, 16, 1);
+  --vt-c-light-grey: rgba(240, 240, 247, 0.1);
+  --vt-c-light-grey-1: #d3d3de;
+  --vt-c-light-grey-2: rgba(228, 228, 238, 1);
+  --vt-c-light-grey-3: rgba(255, 255, 255, 1);
+  --vt-c-light-grey-4: rgba(240, 240, 247, 1);
+
+  --vt-c-grey: rgba(147, 147, 155, 1);
+  --vt-c-grey-1: rgba(14, 14, 16, 1);
+  --vt-c-grey-1-tone: rgba(14, 14, 16, 0.1);
+  --vt-c-grey-2-tone: rgba(104, 117, 136, 1);
+
+  --vt-c-dark-grey: rgba(85, 85, 92, 1);
+  --vt-c-dark-grey-1: rgba(27, 27, 31, 1);
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-background: var(--vt-c-white);
+  --color-background-soft: var(--vt-c-white-soft);
+  --color-background-mute: var(--vt-c-white-mute);
+
+  --color-border: var(--vt-c-divider-light-2);
+  --color-border-hover: var(--vt-c-divider-light-1);
+
+  --color-heading: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-text-light-1);
+
+  --section-gap: 160px;
+}
+
+@font-face {
+  font-family: "Gothampro-normal";
+  src: url("../fonts/gothampro.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gothampro-light";
+  src: url("../fonts/gothampro_light.ttf") format("opentype");
+  font-weight: lighter;
+  font-style: lighter;
+}
+
+@font-face {
+  font-family: "Gothampro-medium";
+  src: url("../fonts/gothampro_medium.ttf") format("opentype");
+  font-weight: bolder;
+  font-style: bolder;
+}
+
+@font-face {
+  font-family: "Gothampro-bold";
+  src: url("../fonts/gothampro_bold.ttf") format("opentype");
+  font-weight: 700;
+  font-style: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--vt-c-black);
+    --color-background-soft: var(--vt-c-black-soft);
+    --color-background-mute: var(--vt-c-black-mute);
+
+    --color-border: var(--vt-c-divider-dark-2);
+    --color-border-hover: var(--vt-c-divider-dark-1);
+
+    --color-heading: var(--vt-c-text-dark-1);
+    --color-text: var(--vt-c-text-dark-2);
+  }
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  font-weight: normal;
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+body {
+  min-height: 100vh;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+    Gothampro-normal,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
