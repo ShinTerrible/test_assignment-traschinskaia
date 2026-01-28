@@ -10,6 +10,7 @@ import IconSortUp from "../icons/IconSortUp.vue";
 import Checkbox from "../common/check/Checkbox.vue";
 import Pagination from "../common/pagination/Pagination.vue";
 import Filter from "../common/filter/Filter.vue";
+import Calendar from "../common/calender/Calendar.vue";
 
 const mockTypes = ref(["Все виды", "Федеральные округа", "Регионы", "Школы"]);
 const mockStatus = ref(["Действующее", "Недействующее"]);
@@ -37,7 +38,7 @@ function toggleCheck() {
 
       <div class="filterWrapper">
         <div>
-          <Dropdown :data="['12.06.2020', '14.09.2019', '23.01.2022']"/>
+          <Dropdown data="calendar" />
         </div>
         <div>
           <Dropdown :data="mockTypes"></Dropdown>
@@ -171,8 +172,8 @@ function toggleCheck() {
         </div>
       </div>
       <div class="pagination">
-        <Pagination/>
-        <Filter/>
+        <Pagination />
+        <Filter />
       </div>
     </div>
   </article>
@@ -307,7 +308,7 @@ function toggleCheck() {
   margin-inline-end: 11.6px;
 }
 
-.pagination{
+.pagination {
   display: flex;
   justify-content: space-between;
 }

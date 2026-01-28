@@ -1,21 +1,67 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import Calendar from "../calender/Calendar.vue";
 
 interface Props {
-  data: string[];
+  data: string[] | "calendar";
 }
 
-
-
 const props = withDefaults(defineProps<Props>(), {
-  data: () => ["Астана", "Берлин", "Владивосток", "Катар", "Астана", "Берлин", "Владивосток", "Катар"]
+  data: () => [
+    "Астана",
+    "Берлин",
+    "Владивосток",
+    "Катар",
+    "Астана",
+    "Берлин",
+    "Владивосток",
+    "Катар",
+  ],
 });
-
-
 
 const dataState = ref(props.data[0]);
 const selectState = ref("");
 const selectElement = ref<HTMLElement | null>(null);
+const monthNames = [
+  "января",
+  "февраля",
+  "марта",
+  "апреля",
+  "мая",
+  "июня",
+  "июля",
+  "августа",
+  "сентября",
+  "октября",
+  "ноября",
+  "декабря",
+];
+
+const today = new Date();
+const initialDate = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+
+let selectedDateDisplay = ref(initialDate);
+const selectedDate = ref<Date>(today);
+
+function updateDisplayFromDate(date: Date) {
+  selectedDateDisplay.value = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function handleSaveDate(date) {
+  selectedDate.value = date;
+  updateDisplayFromDate(date);
+  selectState.value = "";
+  // date.push(startDate.value.toISOString().split('T')[0]) //для запроса
+  // emit('date-selected', date); эмит события родителю для запроса
+}
+
+watch(
+  selectedDate,
+  (newDate) => {
+    updateDisplayFromDate(newDate);
+  },
+  { immediate: true },
+);
 
 const toggleSelect = () => {
   selectState.value = selectState.value === "active" ? "" : "active";
@@ -36,6 +82,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   onMounted(() => {
     document.addEventListener("click", handleCloseOutside);
   });
+
   onUnmounted(() => {
     document.removeEventListener("click", handleCloseOutside);
   });
@@ -45,14 +92,29 @@ const handleCloseOutside = (event: MouseEvent) => {
 <template>
   <form class="form">
     <div class="select" :data-state="selectState" ref="selectElement">
-      <div class="selectTitle" :data-default="props.data[0]" @click="toggleSelect">
+      <div
+        class="selectTitle"
+        :data-default="props.data[0]"
+        @click="toggleSelect"
+        v-if="Array.isArray(props.data)"
+      >
         {{ dataState }}
+      </div>
+
+      <div
+        class="selectTitle"
+        :data-default="props.data[0]"
+        @click="toggleSelect"
+        v-if="props.data === 'calendar'"
+      >
+        {{ selectedDateDisplay }}
       </div>
 
       <div class="selectContent">
         <label
           :for="'singleSelect' + index"
           class="selectLabel"
+          v-if="Array.isArray(props.data)"
           v-for="(item, index) in props.data"
           :key="index"
           @click="selectItem(item)"
@@ -65,6 +127,13 @@ const handleCloseOutside = (event: MouseEvent) => {
             :checked="dataState === item"
           />{{ item }}</label
         >
+
+        <Calendar
+          v-if="props.data === 'calendar'"
+          class="calendar"
+          v-model="selectedDate"
+          @save="handleSaveDate"
+        />
       </div>
     </div>
   </form>
@@ -78,7 +147,6 @@ const handleCloseOutside = (event: MouseEvent) => {
 }
 
 .select {
-  // width: 230px;
   width: 100%;
   min-width: 230px;
   height: 40px;
@@ -108,12 +176,10 @@ const handleCloseOutside = (event: MouseEvent) => {
   display: flex;
   align-items: center;
   width: 100%;
-  // height: 16px;
   font-family: "Gothampro-normal";
   font-size: 16px;
   line-height: 130%;
   padding: 17.5px 24px 17.5px 24px;
-  // background-color: var(--vt-f-white);
   border-radius: 8px;
   border: 1px solid var(--vt-c-light-grey-1);
   cursor: pointer;
@@ -151,7 +217,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   top: 59px;
   left: 0px;
   width: 100%;
-  padding: 6px 24px 6px 24px;
+  padding: 6px 24px 12px 24px;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -159,7 +225,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   border-radius: 8px;
   background-color: var(--vt-f-white);
   display: none;
-  max-height: 150px;
+  // max-height: 150px;
   overflow-y: scroll;
   border-top: 10px solid transparent;
   border-bottom-left-radius: 5px;
