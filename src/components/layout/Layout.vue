@@ -38,7 +38,7 @@ function toggleCheck() {
 
       <div class="filterWrapper">
         <div>
-          <Dropdown :data="['12.06.2020', '14.09.2019', '23.01.2022']"/>
+          <Dropdown data="calendar" />
         </div>
         <div>
           <Dropdown :data="mockTypes"></Dropdown>
@@ -172,8 +172,8 @@ function toggleCheck() {
         </div>
       </div>
       <div class="pagination">
-        <Pagination/>
-        <Filter/>
+        <Pagination />
+        <Filter />
       </div>
     </div>
   </article>
@@ -308,7 +308,7 @@ function toggleCheck() {
   margin-inline-end: 11.6px;
 }
 
-.pagination{
+.pagination {
   display: flex;
   justify-content: space-between;
 }

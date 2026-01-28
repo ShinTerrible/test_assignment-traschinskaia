@@ -1,21 +1,26 @@
 <script setup lang="ts">
 import IconArrowLeft from "@/components/icons/IconArrowLeft.vue";
 import IconArrowRight from "@/components/icons/IconArrowRight.vue";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Button from "../buttons/Button.vue";
 
-interface Props {}
+interface Props {
+  modelValue?: Date | null;
+}
 
-const props = withDefaults(defineProps<Props>(), {});
-const saveData = ref([])
+const emit = defineEmits<{
+  save: [value: Date];
+}>();
+
+const saveData = ref([]);
 
 let today = new Date();
 let currentMonth = ref(today.getMonth());
 let currentYear = ref(today.getFullYear());
 let selectedDate = ref<Date | null>(null);
 
-let startDate = ref<Date | null>(null); 
-let endDate = ref<Date | null>(null); 
+let startDate = ref<Date | null>(null);
+let endDate = ref<Date | null>(null);
 
 const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const monthNames = [
@@ -191,8 +196,7 @@ function clearDataState() {
 }
 
 function onSaveData() {
-  console.log(startDate.value.toISOString().split('T')[0])
-  return saveData.value.push(startDate.value.toISOString().split('T')[0])
+  emit("save", startDate.value);
 }
 </script>
 
@@ -234,7 +238,11 @@ function onSaveData() {
     </div>
     <div class="buttonContainer">
       <Button variant="secondary" title="Отмена" @click="clearDataState" />
-      <Button variant="primary" title="Сохранить" @click="onSaveData"/>
+      <Button
+        variant="primary"
+        title="Сохранить"
+        @click.stop.prevent="onSaveData"
+      />
     </div>
   </div>
 </template>
@@ -254,6 +262,8 @@ function onSaveData() {
   background-color: var(--vt-f-white);
   padding: 24px;
   gap: 16px;
+  margin: auto;
+  margin-block-end: 16px;
 }
 
 .header {
@@ -280,7 +290,7 @@ function onSaveData() {
   line-height: 140%;
   font-weight: 600;
   height: 40px;
-  margin-block-start: 16px;
+  margin-block-start: 10px;
 
   button {
     border: 1px solid transparent;
@@ -301,7 +311,7 @@ function onSaveData() {
 .calendarWeekDays {
   display: flex;
   flex-direction: row;
-  gap: 13px;
+  gap: 10px;
 
   div {
     @include alignContent;
