@@ -10,6 +10,7 @@ import IconSortUp from "../icons/IconSortUp.vue";
 import Checkbox from "../common/check/Checkbox.vue";
 import Pagination from "../common/pagination/Pagination.vue";
 import Filter from "../common/filter/Filter.vue";
+import Calendar from "../common/calender/Calendar.vue";
 
 const mockTypes = ref(["Все виды", "Федеральные округа", "Регионы", "Школы"]);
 const mockStatus = ref(["Действующее", "Недействующее"]);

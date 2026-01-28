@@ -78,7 +78,6 @@ const handleCloseOutside = (event: MouseEvent) => {
 }
 
 .select {
-  // width: 230px;
   width: 100%;
   min-width: 230px;
   height: 40px;
@@ -108,12 +107,10 @@ const handleCloseOutside = (event: MouseEvent) => {
   display: flex;
   align-items: center;
   width: 100%;
-  // height: 16px;
   font-family: "Gothampro-normal";
   font-size: 16px;
   line-height: 130%;
   padding: 17.5px 24px 17.5px 24px;
-  // background-color: var(--vt-f-white);
   border-radius: 8px;
   border: 1px solid var(--vt-c-light-grey-1);
   cursor: pointer;

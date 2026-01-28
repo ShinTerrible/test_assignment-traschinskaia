@@ -34,45 +34,44 @@ import IconArrowRight from "@/components/icons/IconArrowRight.vue";
   list-style-type: none;
   gap: 2px;
 
-   li {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-self: center;
-      text-align: center;
-      font-family: "Gothampro-normal";
-      font-size: 12px;
-      line-height: 130%;
-      letter-spacing: 0;
-      width: 36px;
-      height: 36px;
-      color: var(--vt-c-grey-1);
-      background-color: transparent;
-      cursor: pointer;
-      padding: auto;
-      border-radius: 8px;
+  li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    text-align: center;
+    font-family: "Gothampro-normal";
+    font-size: 12px;
+    line-height: 130%;
+    letter-spacing: 0;
+    width: 36px;
+    height: 36px;
+    color: var(--vt-c-grey-1);
+    background-color: transparent;
+    cursor: pointer;
+    padding: auto;
+    border-radius: 8px;
 
-      &:hover {
-        background-color: var(--vt-f-white);
-      }
-
-      &:active {
-        background-color: var(--vt-c-light-grey-4);
-      }
+    &:hover {
+      background-color: var(--vt-f-white);
     }
+
+    &:active {
+      background-color: var(--vt-c-light-grey-4);
+    }
+  }
 }
 
-  .button {
-    color: var(--vt-c-dark-grey-2);
-    padding: 12px 19px;
-    
-    &:first-of-type {
-      margin-inline-end: 24px;
-    }
+.button {
+  color: var(--vt-c-dark-grey-2);
+  padding: 12px 19px;
 
-    &:last-of-type {
-      margin-inline-start: 24px;
-    }
+  &:first-of-type {
+    margin-inline-end: 24px;
+  }
+
+  &:last-of-type {
+    margin-inline-start: 24px;
+  }
 }
-
 </style>

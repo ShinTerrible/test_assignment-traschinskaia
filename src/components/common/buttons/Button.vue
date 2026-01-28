@@ -1,10 +1,3 @@
-<template>
-  <button :class="buttonClasses" :disabled="disabled">
-    <slot name="icon"></slot>
-    <slot name="title">{{ props.title }}</slot>
-  </button>
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 
@@ -23,6 +16,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const buttonClasses = computed(() => ["button", props.variant, props.icon]);
 </script>
+
+<template>
+  <button :class="buttonClasses" :disabled="disabled">
+    <slot name="icon"></slot>
+    <slot name="title">{{ props.title }}</slot>
+  </button>
+</template>
 
 <style lang="scss" scoped>
 .button {
