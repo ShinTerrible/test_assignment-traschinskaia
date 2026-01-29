@@ -4,7 +4,7 @@ import IconSortDown from "@/components/icons/IconSortDown.vue";
 import IconSortUp from "@/components/icons/IconSortUp.vue";
 import Checkbox from "../check/Checkbox.vue";
 import { ref, watch } from "vue";
-import { iSchoolLicense } from "@/components/features/TableApi/types";
+import { iSchoolLicense } from "@/components/features/tableApi/types";
 
 interface Props {
   data: iSchoolLicense[];
@@ -27,14 +27,18 @@ function toggleCheck() {
 }
 
 function onEducationlevel(data: iSchoolLicense) {
-  let levels = data.supplements[0].educational_programs.map(
-    (elem) => elem.edu_level.name === 'Не определен' ? '' : elem.edu_level.name.split(" ")[0]  ,
-  ); 
+  let levels = data.supplements[0].educational_programs.map((elem) =>
+    elem.edu_level.name === "Не определен"
+      ? ""
+      : elem.edu_level.name.split(" ")[0],
+  );
 
-   levels = levels.filter(function(item, pos) {
+  levels = levels.filter(function (item, pos) {
     return levels.indexOf(item) == pos;
-})
-  levels = levels.filter(elem => {return Boolean(elem)});
+  });
+  levels = levels.filter((elem) => {
+    return Boolean(elem);
+  });
 
   return levels;
 }
@@ -103,7 +107,6 @@ const levels = onEducationlevel;
           />
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -144,7 +147,6 @@ const levels = onEducationlevel;
   padding: 18px 16px;
 
   &:hover {
-
     color: var(--vt-c-grey-1);
   }
 }

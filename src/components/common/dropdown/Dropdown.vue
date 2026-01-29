@@ -1,19 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import Calendar from "../calender/Calendar.vue";
-import { tFilerData } from "@/components/features/TbleFilterApi/types";
+import { tFilerData } from "@/components/features/tableFilterApi/types";
 
 interface Props {
   filterByData?: tFilerData;
   filterByStatus?: string[];
-  calendar?: "calendar";
+  calendar?: boolean; // изменяем тип на boolean
 }
 
 const props = defineProps<Props>();
 
-const dataState = ref(
-  props.filterByData ? "Все виды" : props.filterByStatus?.[0] || "",
-);
+// Определяем тип дропдауна
+const dropdownType = computed(() => {
+  if (props.calendar) return "calendar";
+  if (props.filterByStatus) return "status";
+  if (props.filterByData) return "data";
+  return "unknown";
+});
+
+// Эмитим разные события
+const emit = defineEmits<{
+  "date-selected": [value: Date];
+  "data-selected": [value: string];
+  "status-selected": [value: string];
+}>();
 
 const selectState = ref("");
 const selectElement = ref<HTMLElement | null>(null);
@@ -37,18 +48,26 @@ const initialDate = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.
 
 let selectedDateDisplay = ref(initialDate);
 const selectedDate = ref<Date>(today);
+const dataState = ref(
+  dropdownType.value === "status"
+    ? props.filterByStatus?.[0] || "Все статусы"
+    : dropdownType.value === "data"
+      ? "Все виды"
+      : initialDate,
+);
 
 function updateDisplayFromDate(date: Date) {
   selectedDateDisplay.value = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-function handleSaveDate(date) {
-  selectedDate.value = date;
-  updateDisplayFromDate(date);
-  selectState.value = "";
-  // date.push(startDate.value.toISOString().split('T')[0]) //для запроса
-  // emit('date-selected', date); эмит события родителю для запроса
-}
+// function handleSaveDate(date) {
+//   selectedDate.value = date;
+//   updateDisplayFromDate(date);
+//   selectState.value = "";
+
+//   // date.push(startDate.value.toISOString().split('T')[0]) //для запроса
+//   // emit('date-selected', date); эмит события родителю для запроса
+// }
 
 watch(
   () => props,
@@ -71,9 +90,43 @@ const toggleSelect = () => {
 };
 
 const selectItem = (item: string) => {
+  console.log("Dropdown selectItem вызван:", item, "type:", dropdownType.value);
+
   dataState.value = item;
   selectState.value = "";
+
+  // Эмитим соответствующее событие
+  switch (dropdownType.value) {
+    case "calendar":
+      // Если это календарь, item может быть датой в строковом формате
+      try {
+        const date = new Date(item);
+        if (!isNaN(date.getTime())) {
+          emit("date-selected", date);
+        }
+      } catch (e) {
+        console.error("Ошибка парсинга даты:", e);
+      }
+      break;
+
+    case "status":
+      emit("status-selected", item);
+      break;
+
+    case "data":
+      emit("data-selected", item);
+      break;
+  }
 };
+
+// Для календаря отдельная функция
+function handleSaveDate(date: Date) {
+  console.log("Календарь выбрал дату:", date);
+  selectedDate.value = date;
+  updateDisplayFromDate(date);
+  selectState.value = "";
+  emit("date-selected", date);
+}
 
 const handleCloseOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
@@ -162,7 +215,9 @@ const handleCloseOutside = (event: MouseEvent) => {
         <label
           :for="'singleSelect' + index"
           class="selectLabel"
-          v-for="(item, index) in props.filterByData.regions.filter((item) => item.id !== 86)"
+          v-for="(item, index) in props.filterByData.regions.filter(
+            (item) => item.id !== 86,
+          )"
           :key="index"
           @click="selectItem(item.name)"
         >

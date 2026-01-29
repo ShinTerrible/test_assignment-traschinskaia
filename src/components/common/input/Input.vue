@@ -1,7 +1,14 @@
 <template>
   <div class="inputContainer">
-    <label :for="type" class="label">
-      <input :placeholder="placeholder" :id="type" class="input" />
+    <label for="search" class="label">
+      <input
+        placeholder="Поиск"
+        id="search"
+        class="input"
+        v-model="inputState"
+        @keyup.enter="emitFilters"
+        @click="emitFilters"
+      />
       <IconSearch />
     </label>
   </div>
@@ -9,20 +16,37 @@
 
 <script setup lang="ts">
 import IconSearch from "@/components/icons/IconSearch.vue";
-
+import { ref, watch } from "vue";
 interface Props {
-  type: "search" | "filter";
-  placeholder: string;
+  modelValue?: string;
+}
+
+interface Emits {
+  (e: "update:modelValue", value: string): void;
+  (e: "search-change", value: string): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: "search",
-  placeholder: "Поиск",
+  modelValue: "",
 });
+
+const emit = defineEmits<Emits>();
+const inputState = ref<string>(props.modelValue);
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    inputState.value = newValue;
+  },
+);
+function emitFilters() {
+  emit("update:modelValue", inputState.value);
+  emit("search-change", inputState.value);
+}
 </script>
 
 <style lang="scss" scoped>
 .inputContainer {
+  box-sizing: content-box;
   border-radius: 10px;
   border: 1px solid var(--vt-c-light-grey-1);
   background-color: transparent;
@@ -35,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
 
   svg {
     color: var(--vt-c-dark-grey);
+    cursor: pointer;
   }
 
   &:hover {
