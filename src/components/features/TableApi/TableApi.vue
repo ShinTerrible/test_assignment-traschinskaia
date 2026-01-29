@@ -3,6 +3,7 @@ import Table from "@/components/common/table/Table.vue";
 import { onMounted, ref } from "vue";
 import api from "@/components/entities/school-list-api";
 import { iSchoolLicense } from "./types";
+import Button from "@/components/common/buttons/Button.vue";
 
 const data = ref<iSchoolLicense[] | []>();
 const loading = ref(false);
@@ -15,7 +16,7 @@ async function getTableData() {
   try {
     const response = await api.get("/schools");
     data.value = response.data.data.list;
-    console.log("Данные получены:", response.data);
+    // console.log("Данные получены:", response.data);
   } catch (err) {
     error.value = err.message;
     console.error("ОШИБКА: ", err);
@@ -36,7 +37,7 @@ onMounted(() => {
 
   <div v-else-if="error" class="error">
     Ошибка: {{ error }}
-    <button @click="getTableData">Повторить</button>
+    <Button variant="primary" title="Повторить" @click="getTableData" />
   </div>
 
   <Table v-else-if="data && data?.length > 0" :data="data" />

@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import Calendar from "../calender/Calendar.vue";
+import { tFilerData } from "@/components/features/TbleFilterApi/types";
 
 interface Props {
-  data: string[] | "calendar";
+  filterByData?: tFilerData;
+  filterByStatus?: string[];
+  calendar?: "calendar";
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  data: () => [
-    "Астана",
-    "Берлин",
-    "Владивосток",
-    "Катар",
-    "Астана",
-    "Берлин",
-    "Владивосток",
-    "Катар",
-  ],
-});
+const props = defineProps<Props>();
 
-const dataState = ref(props.data[0]);
+const dataState = ref(
+  props.filterByData ? "Все виды" : props.filterByStatus?.[0] || "",
+);
+
 const selectState = ref("");
 const selectElement = ref<HTMLElement | null>(null);
 const monthNames = [
@@ -54,6 +49,14 @@ function handleSaveDate(date) {
   // date.push(startDate.value.toISOString().split('T')[0]) //для запроса
   // emit('date-selected', date); эмит события родителю для запроса
 }
+
+watch(
+  () => props,
+  (newData) => {
+    console.log("Table data обновлен:", newData);
+  },
+  { immediate: true },
+);
 
 watch(
   selectedDate,
@@ -94,28 +97,36 @@ const handleCloseOutside = (event: MouseEvent) => {
     <div class="select" :data-state="selectState" ref="selectElement">
       <div
         class="selectTitle"
-        :data-default="props.data[0]"
+        :data-default="'Все статусы'"
         @click="toggleSelect"
-        v-if="Array.isArray(props.data)"
+        v-if="props.filterByStatus"
       >
         {{ dataState }}
       </div>
 
       <div
         class="selectTitle"
-        :data-default="props.data[0]"
+        :data-default="'Все виды'"
         @click="toggleSelect"
-        v-if="props.data === 'calendar'"
+        v-if="props.filterByData"
+      >
+        {{ dataState }}
+      </div>
+
+      <div
+        class="selectTitle"
+        :data-default="initialDate"
+        @click="toggleSelect"
+        v-if="props.calendar"
       >
         {{ selectedDateDisplay }}
       </div>
 
-      <div class="selectContent">
+      <div class="selectContent" v-if="props.filterByStatus">
         <label
           :for="'singleSelect' + index"
           class="selectLabel"
-          v-if="Array.isArray(props.data)"
-          v-for="(item, index) in props.data"
+          v-for="(item, index) in props.filterByStatus"
           :key="index"
           @click="selectItem(item)"
         >
@@ -127,9 +138,46 @@ const handleCloseOutside = (event: MouseEvent) => {
             :checked="dataState === item"
           />{{ item }}</label
         >
+      </div>
 
+      <div class="selectContent" v-if="props.filterByData">
+        <span>Федеральные округа</span>
+        <label
+          :for="'singleSelect' + index"
+          class="selectLabel"
+          v-for="(item, index) in props.filterByData.federals"
+          :key="index"
+          @click="selectItem(item.name)"
+        >
+          <input
+            :id="'singleSelect' + index"
+            class="selectInput"
+            type="radio"
+            name="singleSelect"
+            :checked="dataState === item.name"
+          />{{ item.name }}</label
+        >
+        <span>Регионы</span>
+
+        <label
+          :for="'singleSelect' + index"
+          class="selectLabel"
+          v-for="(item, index) in props.filterByData.regions.filter((item) => item.id !== 86)"
+          :key="index"
+          @click="selectItem(item.name)"
+        >
+          <input
+            :id="'singleSelect' + index"
+            class="selectInput"
+            type="radio"
+            name="singleSelect"
+            :checked="dataState === item.name"
+          />{{ item.name }}</label
+        >
+      </div>
+
+      <div class="selectContent calendar" v-if="props.calendar">
         <Calendar
-          v-if="props.data === 'calendar'"
           class="calendar"
           v-model="selectedDate"
           @save="handleSaveDate"
@@ -225,7 +273,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   border-radius: 8px;
   background-color: var(--vt-f-white);
   display: none;
-  // max-height: 150px;
+  max-height: 400px;
   overflow-y: scroll;
   border-top: 10px solid transparent;
   border-bottom-left-radius: 5px;
@@ -234,6 +282,19 @@ const handleCloseOutside = (event: MouseEvent) => {
   transition: all 0.3s ease-out;
 
   z-index: 1;
+
+  span {
+    display: block;
+    margin-block: 6px;
+    font-family: "Gothampro-bold";
+    font-size: 18px;
+    line-height: 130%;
+    padding-inline-start: 16px;
+  }
+}
+
+.calendar {
+  max-height: unset;
 }
 
 .selectInput {
@@ -251,10 +312,10 @@ const handleCloseOutside = (event: MouseEvent) => {
 }
 
 .selectLabel {
-  padding: 13px 16px;
+  padding: 18px 16px;
   display: flex;
   align-items: center;
-  height: 40px;
+  min-height: 50px;
   background-color: var(--vt-c-light-grey-2);
   border-radius: 8px;
   transition: all 0.2s ease-out;
