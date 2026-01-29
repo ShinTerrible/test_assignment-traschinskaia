@@ -25,5 +25,6 @@ const props = withDefaults(defineProps<Props>(), {
   font-size: 12px;
   margin-inline: 2px;
   margin-block-end: 4px;
+  width:max-content;
 }
 </style>
