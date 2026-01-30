@@ -115,9 +115,7 @@ src/
 **FilterContext (Composable)**
 
 Контекст для управления фильтрами:
-typescript
-
-// Основные функции
+typescript// Основные функции
 updateFilter() // Обновление одного фильтра
 resetFilters() // Сброс всех фильтров
 

@@ -18,25 +18,22 @@ const emit = defineEmits<Emit>();
 
 const visiblePages = computed(() => {
   const pages = [];
-  const maxVisible = 5; // Сколько страниц показывать (можно изменить)
+  const maxVisible = 5; 
   const half = Math.floor(maxVisible / 2); // 2
 
   let start = props.currentPage - half;
   let end = props.currentPage + half;
 
-  // Корректируем если вышли за левую границу
   if (start < 1) {
     start = 1;
     end = Math.min(props.totalPages, start + maxVisible - 1);
   }
 
-  // Корректируем если вышли за правую границу
   if (end > props.totalPages) {
     end = props.totalPages;
     start = Math.max(1, end - maxVisible + 1);
   }
 
-  // Генерируем массив страниц
   for (let i = start; i <= end; i++) {
     pages.push(i);
   }

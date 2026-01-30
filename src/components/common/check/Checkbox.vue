@@ -13,7 +13,6 @@ let color = ref("currentColor");
 if (props.variant === "empty") {
   color.value = "#D3D3DE";
 }
-// #D3D3DE
 </script>
 
 <template>

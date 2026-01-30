@@ -4,10 +4,8 @@ import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 
 export default defineConfig(({ mode }) => {
-  // Загружаем переменные окружения
   const env = loadEnv(mode, process.cwd());
 
-  // Пример доступа к переменным окружения
   const apiUrl = env.VITE_API_URL || "https://schooldb.skillline.ru/api";
   const isDevelopment = mode === "development";
 
@@ -23,7 +21,6 @@ export default defineConfig(({ mode }) => {
         scss: {},
       },
       modules: {
-        // Настройка имен классов для CSS Modules
         generateScopedName: isDevelopment
           ? "[name]__[local]__[hash:base64:5]"
           : "[hash:base64:8]",
@@ -41,12 +38,11 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         "/api": {
-          target: apiUrl, // Используем переменную из .env
+          target: apiUrl, 
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, "/api"),
         },
       },
-      // Добавляем заголовки для CORS при разработке
       cors: true,
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -54,7 +50,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: "dist",
-      sourcemap: false, // sourcemap только в development
+      sourcemap: false, 
       rollupOptions: {
         output: {
           chunkFileNames: "js/[name]-[hash].js",
@@ -72,7 +68,7 @@ export default defineConfig(({ mode }) => {
             return "assets/[name]-[hash][extname]";
           },
         },
-        // Оптимизация разделения кода
+      
         manualChunks: {
           vendor: ["vue", "vue-router", "pinia"],
           axios: ["axios"],

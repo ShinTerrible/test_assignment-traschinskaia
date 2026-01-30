@@ -76,7 +76,6 @@ function handleStatusSelect(statusValue: string) {
 }
 
 function handleDataSelect(item: string) {
-  // Проверяем наличие в картах
   const regionId = regionsMap.value.get(item);
   const federalId = federalsMap.value.get(item);
 
