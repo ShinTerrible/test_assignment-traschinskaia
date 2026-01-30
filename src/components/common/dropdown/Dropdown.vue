@@ -221,7 +221,6 @@ const handleCloseOutside = (event: MouseEvent) => {
 
       <div class="selectContent calendar" v-if="props.calendar">
         <Calendar
-          class="calendar"
           v-model="selectedDate"
           @save="handleSaveDate"
         />
@@ -385,6 +384,7 @@ const handleCloseOutside = (event: MouseEvent) => {
 
 .calendar {
   max-height: unset;
+  min-width: 360px;
 }
 
 .selectInput {

@@ -4,7 +4,7 @@ import Input from "../common/input/Input.vue";
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import Pagination from "../common/pagination/Pagination.vue";
 import Filter from "../common/filter/Filter.vue";
-import TableApi from "../features/tableApi/TableApi.vue";
+import TableApi from "../features/TableApi/TableApi.vue";
 import TableFilterApi from "../features/tableFilterApi/TableFilterApi.vue";
 import { provideFilterContext } from "../composables/useFilterContext";
 import { ref, watch } from "vue";
@@ -12,7 +12,7 @@ import { ref, watch } from "vue";
 const filterContext = provideFilterContext();
 
 const pagination = ref({
-  totalPages: filterContext.filterState.value.pages_count|| 10,
+  totalPages: filterContext.filterState.value.pages_count || 10,
   itemsPerPage: 10,
 });
 
@@ -27,22 +27,15 @@ function handleInputUpdate(value: string) {
 }
 
 function handleFiltersChanged(filters: any) {
-  // console.log("Фильтр изменился: ", filters);
   filterContext.updateFilters(filters);
 }
 
 function handlePageChange(page: number) {
-  // console.log("Страница изменена:", page);
   filterContext.updateFilter("page", page);
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-
-
 function handleLimitChange(limit: number) {
-  console.log("Лимит изменился:", limit);
-
   filterContext.updateFilter("count", limit);
 }
 
@@ -50,35 +43,28 @@ watch(
   () => filterContext.filterState.value.count,
   (newLimit) => {
     if (newLimit) {
-      console.log("Лимит изменился: ", newLimit);
       pagination.value.itemsPerPage = newLimit;
 
-      filterContext.updateFilter('page', 1);
+      filterContext.updateFilter("page", 1);
     }
-  }
+  },
 );
 
 watch(
   () => filterContext.queryString.value,
-  (newQuery) => {
-    console.log("Запрос изменился: ", newQuery);
-  },
+  () => {},
   { deep: true },
 );
 
 watch(
   () => filterContext.filterState.value.federal_district_id,
-  (newFilterStatus) => {
-    // console.log("Запрос изменился: ", newFilterStatus);
-  },
+  () => {},
   { deep: true },
 );
 
 watch(
   () => filterContext.filterState.value.search,
   (newSearch) => {
-    // console.log("Поиск изменился: ", newSearch);
-
     if (newSearch !== searchQuery.value) {
       searchQuery.value = newSearch || "";
     }

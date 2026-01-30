@@ -97,7 +97,6 @@ watch(
     if (isFirstRequest.value) return;
 
     if (newPage !== oldPage || newCount !== oldCount) {
-      console.log("Пагинация изменилась:", { page: newPage, count: newCount });
       hasFiltersChanged.value = true;
       getTableData();
     }
@@ -107,7 +106,6 @@ watch(
 
 
 onMounted(() => {
-  console.log("Компонент TableApi смонтирован");
   getFirstTableData();
 });
 </script>
