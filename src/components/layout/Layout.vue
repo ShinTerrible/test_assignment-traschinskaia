@@ -11,6 +11,11 @@ import { ref, watch } from "vue";
 
 const filterContext = provideFilterContext();
 
+const pagination = ref({
+  totalPages: filterContext.filterState.value.pages_count|| 10,
+  itemsPerPage: 10,
+});
+
 const searchQuery = ref(filterContext.filterState.value.search || "");
 
 function handleSearch() {
@@ -22,17 +27,36 @@ function handleInputUpdate(value: string) {
 }
 
 function handleFiltersChanged(filters: any) {
-  console.log("Фильтр изменился: ", filters);
+  // console.log("Фильтр изменился: ", filters);
   filterContext.updateFilters(filters);
 }
 
 function handlePageChange(page: number) {
+  // console.log("Страница изменена:", page);
   filterContext.updateFilter("page", page);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+
+
 function handleLimitChange(limit: number) {
-  filterContext.updateFilter("limit", limit);
+  console.log("Лимит изменился:", limit);
+
+  filterContext.updateFilter("count", limit);
 }
+
+watch(
+  () => filterContext.filterState.value.count,
+  (newLimit) => {
+    if (newLimit) {
+      console.log("Лимит изменился: ", newLimit);
+      pagination.value.itemsPerPage = newLimit;
+
+      filterContext.updateFilter('page', 1);
+    }
+  }
+);
 
 watch(
   () => filterContext.queryString.value,
@@ -43,9 +67,9 @@ watch(
 );
 
 watch(
-  () => filterContext.filterState.value.federal_id,
+  () => filterContext.filterState.value.federal_district_id,
   (newFilterStatus) => {
-    console.log("Запрос изменился: ", newFilterStatus);
+    // console.log("Запрос изменился: ", newFilterStatus);
   },
   { deep: true },
 );
@@ -53,7 +77,7 @@ watch(
 watch(
   () => filterContext.filterState.value.search,
   (newSearch) => {
-    console.log("Поиск изменился: ", newSearch);
+    // console.log("Поиск изменился: ", newSearch);
 
     if (newSearch !== searchQuery.value) {
       searchQuery.value = newSearch || "";
@@ -88,11 +112,14 @@ watch(
       <div class="pagination">
         <Pagination
           :current-page="filterContext.filterState.value.page || 1"
+          :total-pages="pagination.totalPages"
           @page-change="handlePageChange"
           class="paginationItem"
         />
         <Filter
-          :limit="filterContext.filterState.value.limit || 10"
+          :total-items="filterContext.filterState.value.total_items || 50"
+          :limit="filterContext.filterState.value.count || 10"
+          :curent-limit="pagination.itemsPerPage"
           @limit-change="handleLimitChange"
           class="filter"
         />

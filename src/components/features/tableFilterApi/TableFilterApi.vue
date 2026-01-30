@@ -5,7 +5,6 @@ import TableFilter from "../../common/tableFilter/TableFilter.vue";
 import { tFederals, tFilerData, tRegions } from "./types";
 import { useFilterContext } from "../../composables/useFilterContext";
 
-
 const filterContext = useFilterContext();
 
 const regions = ref<tRegions[]>();
@@ -65,30 +64,27 @@ const federalsMap = computed(() => {
 
 function handleDateSelect(date: Date) {
   const formattedDate = date.toISOString().split("T")[0];
-  filterContext.updateFilter("date", formattedDate);
+  filterContext.updateFilter("updated_at", formattedDate);
 }
 
 function handleStatusSelect(statusValue: string) {
   const statusMap: Record<string, string> = {
+    Все: "all",
     Действующее: "active",
     Недействующее: "inactive",
   };
-
-  filterContext.updateFilter("status", statusMap[statusValue] || statusValue);
 }
 
 function handleDataSelect(item: string) {
-  console.log("Выбран элемент:", item);
-
   // Проверяем наличие в картах
   const regionId = regionsMap.value.get(item);
   const federalId = federalsMap.value.get(item);
 
   if (regionId !== undefined) {
     filterContext.updateFilter("region_id", regionId);
-    filterContext.updateFilter("federal_id", null);
+    filterContext.updateFilter("federal_district_id", null);
   } else if (federalId !== undefined) {
-    filterContext.updateFilter("federal_id", federalId);
+    filterContext.updateFilter("federal_district_id", federalId);
     filterContext.updateFilter("region_id", null);
   } else {
     console.warn("Элемент не найден в картах:", item);
@@ -97,13 +93,8 @@ function handleDataSelect(item: string) {
 
 watch(
   () => filterContext.filterState.value,
-  (newFilters, oldFilters) => {
-    console.log("🎯 filterState изменился:");
-    console.log("Было:", oldFilters);
-    console.log("Стало:", newFilters);
-    console.log("Query String:", filterContext.queryString.value);
-  },
-  { deep: true }, // важно для отслеживания вложенных объектов
+  () => {},
+  { deep: true }, 
 );
 
 onMounted(() => {

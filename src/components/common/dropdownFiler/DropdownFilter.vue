@@ -5,18 +5,12 @@ interface Props {
   data: string[];
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  data: () => [
-    "Астана",
-    "Берлин",
-    "Владивосток",
-    "Катар",
-    "Астана",
-    "Берлин",
-    "Владивосток",
-    "Катар",
-  ],
-});
+interface Emit {
+  (e: "change-limit", limit: string): void;
+}
+const props = defineProps<Props>();
+
+const emit = defineEmits<Emit>();
 
 const dataState = ref(props.data[0]);
 const selectState = ref("");
@@ -29,6 +23,9 @@ const toggleSelect = () => {
 const selectItem = (item: string) => {
   dataState.value = item;
   selectState.value = "";
+
+
+  emit("change-limit", item);
 };
 
 const handleCloseOutside = (event: MouseEvent) => {

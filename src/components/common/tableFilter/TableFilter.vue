@@ -6,7 +6,7 @@ import { tFilerData } from "../../features/tableFilterApi/types";
 
 const filterContext = useFilterContext();
 
-const status = ref(["Действующее", "Недействующее"]);
+const status = ref(["Все", "Действующее", "Недействующее"]);
 
 interface Props {
   subject: tFilerData;
@@ -27,19 +27,11 @@ const filterState = ref({
   federal_id: null,
 });
 
-watch(
-  filterState,
-  (newFilters) => {
-    console.log("Фильтры обновлены:", newFilters);
-  },
-  { deep: true },
-);
+watch(filterState, () => {}, { deep: true });
 
 watch(
   () => props.subject,
-  (newData) => {
-    console.log("Table data обновлен:", newData);
-  },
+  () => {},
   { immediate: true },
 );
 function handleDateSelect(date: Date) {
@@ -94,6 +86,6 @@ function handleDataSelect(data: string) {
 
 .dropdown-item {
   flex: 1;
-  min-width: 0; // Важно для сжатия текста
+  min-width: 0;
 }
 </style>

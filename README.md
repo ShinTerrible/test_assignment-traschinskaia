@@ -1,28 +1,17 @@
 # test_assignment-skilline
 
-This template should help get you started developing with Vue 3 in Vite.
+Тестовое задание на вакансию Frontend-разработчика
 
-## Recommended IDE Setup
+## Старт проекта
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+### Установка зависимостей
 
 ```sh
 npm install
+```
+
+```sh
+yarn install
 ```
 
 ### Compile and Hot-Reload for Development
@@ -36,3 +25,102 @@ npm run dev
 ```sh
 npm run build
 ```
+
+#### Стек проекта:
+
+    **Vue 3** - Composition API, <script setup>, TypeScript
+
+    **Vite** - современный сборщик
+
+    **TypeScript** - строгая типизация
+
+    **Sass/SCSS** - препроцессор CSS
+
+    **Axios** - HTTP-клиент для API запросов
+
+    **Vue Context** - управление состоянием
+
+#### Структура проекта в рамках FSD
+
+src/
+├── components/ # UI компоненты
+│ ├── common/ # Переиспользуемые компоненты
+│ ├── features/ # Функциональные компоненты
+│ └── icons/ # Иконки
+├── composables/ # Vue composables (хуки)
+├── entities/ # Модули бизнес-логики
+├── types/ # TypeScript типы
+└── assets/ # Статические ресурсы
+
+#### Реализованные функции
+
+    -Таблица учреждений
+    -Отображение списка образовательных учреждений
+    -Пагинация данных
+    -Адаптивный дизайн для всех устройств
+    -Сортировка по колонкам
+
+#### Система фильтрации
+
+    Контекст фильтров (FilterContext) - централизованное управление состоянием
+
+    Фильтрация по:
+
+        - Федеральным округам
+        - Регионам
+        - Статусу лицензии (Действующее/-Н   - Недействующее) - (не реализовано)
+        - Дате обновления
+
+    Локальная фильтрация данных (без запросов к серверу) - (не реализовано)
+
+    Сброс фильтров
+
+#### Работа с API
+
+    TableApi компонент:
+
+        - Первоначальная загрузка данных (/schools?count=10)
+        - Запросы с примененными фильтрами
+        - Обработка ошибок и состояний загрузки
+
+    Axios инстанс с интерцепторами
+
+    Типизированные ответы API
+
+#### Адаптивный дизайн
+
+    - Mobile
+    - Tablet
+    - Desktop
+
+    Гибкая сетка и адаптивные компоненты
+
+#### Ключевые компоненты
+
+**TableApi.vue**
+
+Основной компонент для работы с данными:
+
+    - Первый запрос с параметром count=10
+    - Обработка фильтров через контекст
+    - Управление состояниями загрузки/ошибки
+
+**TableFilterApi.vue**
+
+Компонент фильтрации:
+
+    - Загрузка списка регионов и федеральных округов
+    - Обработка выбора фильтров
+
+**FilterContext (Composable)**
+
+Контекст для управления фильтрами:
+typescript
+
+// Основные функции
+updateFilter() // Обновление одного фильтра
+resetFilters() // Сброс всех фильтров
+
+**Pagination.vue**
+
+Компонент пагинации: - Навигация по страницам - Динамический расчет видимых страниц - Интеграция с контекстом фильтров

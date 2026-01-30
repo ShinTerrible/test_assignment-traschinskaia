@@ -11,9 +11,6 @@ export default defineConfig(({ mode }) => {
   const apiUrl = env.VITE_API_URL || "https://schooldb.skillline.ru/api";
   const isDevelopment = mode === "development";
 
-  console.log(`🚀 Режим сборки: ${mode}`);
-  console.log(`🔧 API URL: ${apiUrl}`);
-
   return {
     plugins: [vue(), vueDevTools()],
     resolve: {

@@ -1,4 +1,4 @@
-export type iSchoolLicense = {
+export type tSchoolLicense = {
   uuid: string;
   reg_number: string | null;
   issue_date: string;
@@ -18,7 +18,18 @@ export type iSchoolLicense = {
     };
   };
   supplements: Array<{
+    uuid: string;
+    number: string;
+    is_for_branch: boolean;
+    form_number: string | null;
+    serial_number: string | null;
+    note: string | null;
+    status: {
+      name: string;
+      code: string | null;
+    };
     educational_programs: Array<{
+      uuid: string;
       edu_level: {
         name: string;
         short_name: string | null;
@@ -26,14 +37,20 @@ export type iSchoolLicense = {
     }>;
   }>;
 };
+export type tContextResponse = {
+  pages_count: number;
+  page: number;
+  total_count: number;
+  list: tSchoolLicense[];
+};
 
-export type iApiSchoolsResponse = {
+export type tApiSchoolsResponse = {
   status: boolean;
   message: string;
   data: {
     pages_count: number;
     page: number;
     total_count: number;
-    list: iSchoolLicense[];
+    list: tSchoolLicense[];
   };
 };

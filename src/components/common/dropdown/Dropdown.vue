@@ -63,7 +63,6 @@ function updateDisplayFromDate(date: Date) {
 watch(
   () => props,
   (newData) => {
-    console.log("Table data обновлен:", newData);
   },
   { immediate: true },
 );
@@ -81,7 +80,6 @@ const toggleSelect = () => {
 };
 
 const selectItem = (item: string) => {
-  console.log("Dropdown selectItem вызван:", item, "type:", dropdownType.value);
 
   dataState.value = item;
   selectState.value = "";
@@ -110,9 +108,8 @@ const selectItem = (item: string) => {
   }
 };
 
-// Для календаря отдельная функция
+
 function handleSaveDate(date: Date) {
-  console.log("Календарь выбрал дату:", date);
   selectedDate.value = date;
   updateDisplayFromDate(date);
   selectState.value = "";
@@ -234,22 +231,17 @@ const handleCloseOutside = (event: MouseEvent) => {
 </template>
 
 <style lang="scss" scoped>
-// @media (min-width: 360px) and (max-width: 560px) {
-//   & {
-
-//   }
-// }
 
 .form {
   position: relative;
   box-sizing: border-box;
-  width: 100%; // Добавляем
-  height: 100%; // Добавляем
+  width: 100%; 
+  height: 100%; 
 }
 
 .select {
   min-width: 208px;
-  width: 100%; // Добавляем
+  width: 100%; 
   height: 40px;
   font-family: "Gothampro-normal";
   font-size: 16px;
@@ -258,8 +250,8 @@ const handleCloseOutside = (event: MouseEvent) => {
 
   @media (min-width: 561px) and (max-width: 760px) {
     & {
-      min-width: 120px; // Уменьшаем минимальную ширину
-      max-width: 100%; // Ограничиваем максимальную ширину
+      min-width: 120px; 
+      max-width: 100%;
     }
   }
 
@@ -302,7 +294,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   overflow: hidden;
   white-space: nowrap;
   display: -webkit-box;
-  -webkit-line-clamp: 1; /* Количество строк */
+  -webkit-line-clamp: 1; 
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
 

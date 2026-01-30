@@ -16,20 +16,26 @@ export type tFilerData = {
 };
 
 export interface FilterState {
-  date?: string | null; // Дата в формате YYYY-MM-DD
-  region_id?: number | null; // ID региона
-  federal_id?: number | null; // ID или код федерального округа
-  status?: string | null; // Статус лицензии
-  page?: number; // Пагинация
-  limit?: number; // Количество элементов на странице
+  updated_at?: string | null;
+  region_id?: number | null;
+  federal_district_id?: number | null;
+  status?: string | null;
+  page?: number;
+  count?: number;
   search?: string;
+  download?: boolean;
+  total_items?: null | number;
+  pages_count?: null;
 }
 
 export interface ApiFilters {
-  date?: string;
+  updated_at?: string;
   region_id?: number;
-  federal_district?: string; // API ожидает federal_district
+  federal_district_id?: string;
   status?: string;
   page?: number;
   per_page?: number;
+  download?: boolean;
+  total_items?: null | number;
+  pages_count?: null | number;
 }

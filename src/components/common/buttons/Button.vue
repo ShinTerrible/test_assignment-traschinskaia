@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 interface Props {
   icon?: string;
-  title: string;
+  title?: string;
   disabled?: boolean;
   variant: "accent" | "primary" | "secondary";
 }

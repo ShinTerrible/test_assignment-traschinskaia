@@ -2,33 +2,26 @@
 import EduLevel from "../eduLevel/EduLevel.vue";
 import IconSortDown from "../../icons/IconSortDown.vue";
 import IconSortUp from "../../icons/IconSortUp.vue";
-import Checkbox from "../check/Checkbox.vue";
-import { ref, watch } from "vue";
-import { iSchoolLicense } from "../../features/tableApi/types";
+import { watch } from "vue";
+import { tSchoolLicense } from "../../features/tableApi/types";
 
 interface Props {
-  data: iSchoolLicense[];
+  data: tSchoolLicense[];
 }
 
 const props = defineProps<Props>();
 
 watch(
   () => props.data,
-  (newData) => {
-    console.log("Table data обновлен:", newData);
-  },
+  () => {},
   { immediate: true },
 );
 
-const check = ref<"default" | "checked" | "empty">("default");
-
-function toggleCheck() {
-  check.value = check.value === "default" ? "checked" : "default";
-}
-
-function onEducationlevel(data: iSchoolLicense) {
+function onEducationlevel(data: tSchoolLicense) {
   let levels = data.supplements[0].educational_programs.map((elem) =>
-    elem.edu_level.name === "Не определен"
+    elem.edu_level.name === "Не определен" ||
+    elem.edu_level.name === null ||
+    elem.edu_level.name === undefined
       ? ""
       : elem.edu_level.name.split(" ")[0],
   );
@@ -50,9 +43,6 @@ const levels = onEducationlevel;
   <div class="table">
     <div class="tableHeader">
       <div class="header">
-        <div class="checkboxWrapper">
-          <Checkbox :variant="check" @click="toggleCheck" />
-        </div>
         Регион
         <div class="icons">
           <IconSortUp data-activ="false" />
@@ -88,9 +78,6 @@ const levels = onEducationlevel;
     <div class="tableBody">
       <div class="tableItem" v-for="data in props.data" :key="data.uuid">
         <div class="regionWrapper">
-          <div class="checkboxWrapper">
-            <Checkbox variant="empty" @click="toggleCheck" />
-          </div>
           {{ data.edu_org.region.name }}
         </div>
         <div class="nameWrapper">
@@ -254,7 +241,7 @@ const levels = onEducationlevel;
     position: relative;
 
     &::before {
-      content: "Название:";
+      content: "Название: ";
       display: block;
       font-family: "Gothampro-medium";
       color: var(--vt-c-grey-1);
@@ -271,7 +258,7 @@ const levels = onEducationlevel;
     order: 3;
 
     &::before {
-      content: "Адрес:";
+      content: "Адрес: ";
       display: block;
       font-family: "Gothampro-medium";
       color: var(--vt-c-grey-1);
@@ -302,7 +289,7 @@ const levels = onEducationlevel;
   @media (min-width: 360px) and (max-width: 760px) {
     order: 4;
     &::before {
-      content: "Уровни:";
+      content: "Уровни: ";
       display: block;
       width: 100%;
       font-family: "Gothampro-medium";
@@ -310,14 +297,6 @@ const levels = onEducationlevel;
       margin-bottom: 4px;
       font-size: 14px;
     }
-  }
-}
-
-.checkboxWrapper {
-  margin-inline-end: 11.6px;
-
-  @media (min-width: 360px) and (max-width: 760px) {
-    display: none;
   }
 }
 

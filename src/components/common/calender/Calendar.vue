@@ -4,9 +4,6 @@ import IconArrowRight from "../../icons/IconArrowRight.vue";
 import { computed, ref } from "vue";
 import Button from "../buttons/Button.vue";
 
-// interface Props {
-//   modelValue?: Date | null;
-// }
 
 const emit = defineEmits<{
   save: [value: Date];
@@ -188,7 +185,6 @@ function isInRange(date: Date) {
 }
 
 function clearDataState() {
-  console.log(startDate, endDate);
   selectedDate.value = null;
   startDate.value = null;
   endDate.value = null;
@@ -204,7 +200,7 @@ function onSaveData() {
     <div class="header">
       <h3>Выбрать период</h3>
       <div class="headerButtonConatiner">
-        <Button title="" variant="secondary" @click="prevMonth"
+        <Button title="" variant="secondary" @click.stop.prevent="prevMonth"
           ><template #icon> <IconArrowLeft /></template
         ></Button>
         <span>{{ monthNames[currentMonth] }} {{ currentYear }}</span>
@@ -236,7 +232,7 @@ function onSaveData() {
       </div>
     </div>
     <div class="buttonContainer">
-      <Button variant="secondary" title="Отмена" @click="clearDataState" />
+      <Button variant="secondary" title="Отмена" @click.stop.prevent="clearDataState" />
       <Button
         variant="primary"
         title="Сохранить"
