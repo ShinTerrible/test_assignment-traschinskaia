@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import IconArrowLeft from "@/components/icons/IconArrowLeft.vue";
-import IconArrowRight from "@/components/icons/IconArrowRight.vue";
-import { computed, ref, watch } from "vue";
+import IconArrowLeft from "../../icons/IconArrowLeft.vue";
+import IconArrowRight from "../../icons/IconArrowRight.vue";
+import { computed, ref } from "vue";
 import Button from "../buttons/Button.vue";
 
-interface Props {
-  modelValue?: Date | null;
-}
 
 const emit = defineEmits<{
   save: [value: Date];
 }>();
 
-const saveData = ref([]);
 
 let today = new Date();
 let currentMonth = ref(today.getMonth());
@@ -81,7 +77,7 @@ function generateCalendar() {
 
   // полное количества ячеек (6 строк по 7 дней)
   while (days.length % 7 !== 0) {
-    const date = new Date(
+    const date: Date = new Date(
       currentYear.value,
       currentMonth.value + 1,
       days.length - lastDayOfMonth.getDate() - startDay.value + 1,
@@ -98,7 +94,7 @@ function generateCalendar() {
   return days;
 }
 
-function isToday(date) {
+function isToday(date: Date) {
   return (
     date.getDate() === today.getDate() &&
     date.getMonth() === today.getMonth() &&
@@ -189,14 +185,13 @@ function isInRange(date: Date) {
 }
 
 function clearDataState() {
-  console.log(startDate, endDate);
   selectedDate.value = null;
   startDate.value = null;
   endDate.value = null;
 }
 
 function onSaveData() {
-  emit("save", startDate.value);
+  emit("save", startDate.value as Date);
 }
 </script>
 
@@ -205,7 +200,7 @@ function onSaveData() {
     <div class="header">
       <h3>Выбрать период</h3>
       <div class="headerButtonConatiner">
-        <Button title="" variant="secondary" @click="prevMonth"
+        <Button title="" variant="secondary" @click.stop.prevent="prevMonth"
           ><template #icon> <IconArrowLeft /></template
         ></Button>
         <span>{{ monthNames[currentMonth] }} {{ currentYear }}</span>
@@ -237,7 +232,7 @@ function onSaveData() {
       </div>
     </div>
     <div class="buttonContainer">
-      <Button variant="secondary" title="Отмена" @click="clearDataState" />
+      <Button variant="secondary" title="Отмена" @click.stop.prevent="clearDataState" />
       <Button
         variant="primary"
         title="Сохранить"
@@ -248,6 +243,7 @@ function onSaveData() {
 </template>
 
 <style lang="scss" scoped>
+
 @mixin alignContent {
   display: flex;
   flex-direction: column;
@@ -255,7 +251,6 @@ function onSaveData() {
 
 .calendarContainer {
   @include alignContent;
-
   height: 482px;
   width: 364px;
   border-radius: 16px;

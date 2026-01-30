@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 interface Props {
   icon?: string;
-  title: string;
+  title?: string;
   disabled?: boolean;
   variant: "accent" | "primary" | "secondary";
 }
@@ -20,7 +20,7 @@ const buttonClasses = computed(() => ["button", props.variant, props.icon]);
 <template>
   <button :class="buttonClasses" :disabled="disabled">
     <slot name="icon"></slot>
-    <slot name="title">{{ props.title }}</slot>
+    <span name="title">{{ props.title }}</span>
   </button>
 </template>
 
@@ -38,6 +38,20 @@ const buttonClasses = computed(() => ["button", props.variant, props.icon]);
   background-color: transparent;
   cursor: pointer;
   color: var(--vt-f-black);
+
+  @media (min-width: 769px) {
+    & {
+    padding: 16px 24px;
+  line-height: 100%;
+
+    }
+  }
+
+    @media (min-width: 360px) and (max-width: 768px) {
+    & {
+      padding: 11px 24px;
+    }
+  }
 }
 
 .accent {

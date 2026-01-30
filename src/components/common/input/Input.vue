@@ -1,40 +1,71 @@
 <template>
   <div class="inputContainer">
-    <label :for="type" class="label">
-      <input :placeholder="placeholder" :id="type" class="input" />
-      <IconSearch />
+    <label for="search" class="label">
+      <input
+        placeholder="Поиск"
+        id="search"
+        class="input"
+        v-model="inputState"
+        @keyup.enter="emitFilters"
+        @click="emitFilters"
+      />
     </label>
+    <IconSearch class="searchIcon" />
   </div>
 </template>
 
 <script setup lang="ts">
-import IconSearch from "@/components/icons/IconSearch.vue";
-
+import IconSearch from "../../icons/IconSearch.vue";
+import { ref, watch } from "vue";
 interface Props {
-  type: "search" | "filter";
-  placeholder: string;
+  modelValue?: string;
+}
+
+interface Emits {
+  (e: "update:modelValue", value: string): void;
+  (e: "search-change", value: string): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: "search",
-  placeholder: "Поиск",
+  modelValue: "",
 });
+
+const emit = defineEmits<Emits>();
+const inputState = ref<string>(props.modelValue);
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    inputState.value = newValue;
+  },
+);
+function emitFilters() {
+  emit("update:modelValue", inputState.value);
+  emit("search-change", inputState.value);
+}
 </script>
 
 <style lang="scss" scoped>
 .inputContainer {
+  box-sizing: content-box;
   border-radius: 10px;
   border: 1px solid var(--vt-c-light-grey-1);
   background-color: transparent;
   padding: 17.5px 24px;
-
-  width: 300px;
+  display: flex;
+  min-width: 200px;
   align-items: center;
   font-size: 16px;
   font-family: "Gothampro-normal";
+  max-height: 60px
+ 
 
   svg {
     color: var(--vt-c-dark-grey);
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    flex-shrink: 0;
   }
 
   &:hover {
@@ -54,14 +85,32 @@ const props = withDefaults(defineProps<Props>(), {
       color: var(--vt-c-grey-1);
     }
   }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      padding: 12px 26px 12px 16px;
+      flex-direction: row;
+
+      svg {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+      }
+    }
+  }
 }
 
 .label {
   border: 0px solid transparent;
   background-color: transparent;
   display: flex;
-  justify-content: space-between;
   line-height: 130%;
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      width: 100%;
+    }
+  }
 }
 
 .input {

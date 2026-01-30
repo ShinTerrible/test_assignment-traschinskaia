@@ -1,24 +1,89 @@
 <script lang="ts" setup>
-import { ref } from "vue";
 import Button from "../common/buttons/Button.vue";
-import Dropdown from "../common/dropdown/Dropdown.vue";
 import Input from "../common/input/Input.vue";
 import IconDocumentation from "../icons/IconDocumentation.vue";
-import EduLevel from "../common/eduLevel/EduLevel.vue";
-import IconSortDown from "../icons/IconSortDown.vue";
-import IconSortUp from "../icons/IconSortUp.vue";
-import Checkbox from "../common/check/Checkbox.vue";
 import Pagination from "../common/pagination/Pagination.vue";
 import Filter from "../common/filter/Filter.vue";
-import Calendar from "../common/calender/Calendar.vue";
+import TableApi from "../features/tableApi/TableApi.vue";
+import TableFilterApi from "../features/tableFilterApi/TableFilterApi.vue";
+import { provideFilterContext } from "../composables/useFilterContext";
+import { ref, watch } from "vue";
 
-const mockTypes = ref(["Все виды", "Федеральные округа", "Регионы", "Школы"]);
-const mockStatus = ref(["Действующее", "Недействующее"]);
-const check = ref<"default" | "checked" | "empty">("default");
+const filterContext = provideFilterContext();
 
-function toggleCheck() {
-  check.value = check.value === "default" ? "checked" : "default";
+const pagination = ref({
+  totalPages: filterContext.filterState.value.pages_count|| 10,
+  itemsPerPage: 10,
+});
+
+const searchQuery = ref(filterContext.filterState.value.search || "");
+
+function handleSearch() {
+  filterContext.updateFilter("search", searchQuery.value);
 }
+
+function handleInputUpdate(value: string) {
+  searchQuery.value = value;
+}
+
+function handleFiltersChanged(filters: any) {
+  // console.log("Фильтр изменился: ", filters);
+  filterContext.updateFilters(filters);
+}
+
+function handlePageChange(page: number) {
+  // console.log("Страница изменена:", page);
+  filterContext.updateFilter("page", page);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+
+function handleLimitChange(limit: number) {
+  console.log("Лимит изменился:", limit);
+
+  filterContext.updateFilter("count", limit);
+}
+
+watch(
+  () => filterContext.filterState.value.count,
+  (newLimit) => {
+    if (newLimit) {
+      console.log("Лимит изменился: ", newLimit);
+      pagination.value.itemsPerPage = newLimit;
+
+      filterContext.updateFilter('page', 1);
+    }
+  }
+);
+
+watch(
+  () => filterContext.queryString.value,
+  (newQuery) => {
+    console.log("Запрос изменился: ", newQuery);
+  },
+  { deep: true },
+);
+
+watch(
+  () => filterContext.filterState.value.federal_district_id,
+  (newFilterStatus) => {
+    // console.log("Запрос изменился: ", newFilterStatus);
+  },
+  { deep: true },
+);
+
+watch(
+  () => filterContext.filterState.value.search,
+  (newSearch) => {
+    // console.log("Поиск изменился: ", newSearch);
+
+    if (newSearch !== searchQuery.value) {
+      searchQuery.value = newSearch || "";
+    }
+  },
+);
 </script>
 
 <template>
@@ -27,7 +92,11 @@ function toggleCheck() {
       <div class="searchWrapper">
         <h2>Таблица учреждений</h2>
         <div class="formWrapper">
-          <Input type="search" placeholder="Поиск" />
+          <Input
+            :modelValue="searchQuery"
+            @update:modelValue="handleInputUpdate"
+            @search-change="handleSearch"
+          />
           <Button icon="document" variant="accent" title="Скачать">
             <template #icon>
               <IconDocumentation />
@@ -36,162 +105,40 @@ function toggleCheck() {
         </div>
       </div>
 
-      <div class="filterWrapper">
-        <div>
-          <Dropdown data="calendar" />
-        </div>
-        <div>
-          <Dropdown :data="mockTypes"></Dropdown>
-        </div>
-        <div>
-          <Dropdown :data="mockStatus"></Dropdown>
-        </div>
-      </div>
+      <TableFilterApi @filters-changed="handleFiltersChanged" />
 
-      <div class="table">
-        <div class="tableHeader">
-          <div class="header">
-            <div class="checkboxWrapper">
-              <Checkbox :variant="check" @click="toggleCheck" />
-            </div>
-            Регион
-            <div class="icons">
-              <IconSortUp data-activ="false" />
-              <IconSortDown />
-            </div>
-          </div>
-          <div class="header">
-            Название
-            <div class="icons">
-              <div class="icons">
-                <IconSortUp />
-                <IconSortDown />
-              </div>
-            </div>
-          </div>
-          <div class="header">
-            Адрес
-            <div class="icons">
-              <IconSortUp />
-              <IconSortDown />
-            </div>
-          </div>
-          <div class="header">
-            Уровень образования
-            <div class="icons">
-              <IconSortUp />
+      <TableApi />
 
-              <IconSortDown />
-            </div>
-          </div>
-        </div>
-
-        <div class="tableBody">
-          <div class="tableItem">
-            <div class="regionWrapper">
-              <div class="checkboxWrapper">
-                <Checkbox variant="empty" @click="toggleCheck" />
-              </div>
-              Белгородская область
-            </div>
-            <div class="nameWrapper">
-              МБОУ Средняя общеобразовательная школа №2
-            </div>
-            <div class="adressWrapper">
-              ул. Николая Гондатти, д. 13 ул. Н. Гондатти 13 ; ул. Н. Зелинского
-              22
-            </div>
-            <div class="levelWrapper">
-              <EduLevel level="Среднее" /> <EduLevel level="Высшее" />
-              <EduLevel level="Специальное" /> <EduLevel level="Проф" />
-              <EduLevel level="Бакалавр" />
-            </div>
-          </div>
-
-          <div class="tableItem">
-            <div class="regionWrapper">
-              <div class="checkboxWrapper">
-                <Checkbox variant="empty" @click="toggleCheck" />
-              </div>
-              Брянская область
-            </div>
-            <div class="nameWrapper">
-              МБОУ Основная общеобразовательная школа №3
-            </div>
-            <div class="adressWrapper">
-              ул. Строителей, д.2а ул. Домостроителей 2а, ул. Камчатская, 154
-            </div>
-            <div class="levelWrapper">
-              <EduLevel level="Среднее" /> <EduLevel level="Высшее" />
-              <EduLevel level="Специальное" /> <EduLevel level="Проф" />
-              <EduLevel level="Бакалавр" />
-            </div>
-          </div>
-
-          <div class="tableItem">
-            <div class="regionWrapper">
-              <div class="checkboxWrapper">
-                <Checkbox :variant="check" @click="toggleCheck" />
-              </div>
-              Владимирская область
-            </div>
-            <div class="nameWrapper">
-              МБОУ СОШ №4 с. Засечное, ул. Изумрудная 8А
-            </div>
-            <div class="adressWrapper">
-              пер. Красноармейский, дом 1, гор. Удомля, Тверская область, 171842
-            </div>
-            <div class="levelWrapper">
-              <EduLevel level="Среднее" /> <EduLevel level="Высшее" />
-              <EduLevel level="Специальное" /> <EduLevel level="Проф" />
-              <EduLevel level="Бакалавр" />
-            </div>
-          </div>
-
-          <div class="tableItem">
-            <div class="regionWrapper">
-              <div class="checkboxWrapper">
-                <Checkbox :variant="check" @click="toggleCheck" />
-              </div>
-              Воронежская область
-            </div>
-
-            <div class="nameWrapper">
-              МБОУ Средняя общеобразовательная школа №5
-            </div>
-            <div class="adressWrapper">
-              Большая Очаковская улица, дом 42, корпус 2
-            </div>
-
-            <div class="levelWrapper">
-              <EduLevel level="Среднее" /> <EduLevel level="Высшее" />
-              <EduLevel level="Специальное" /> <EduLevel level="Проф" />
-              <EduLevel level="Бакалавр" />
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="pagination">
-        <Pagination />
-        <Filter />
+        <Pagination
+          :current-page="filterContext.filterState.value.page || 1"
+          :total-pages="pagination.totalPages"
+          @page-change="handlePageChange"
+          class="paginationItem"
+        />
+        <Filter
+          :total-items="filterContext.filterState.value.total_items || 50"
+          :limit="filterContext.filterState.value.count || 10"
+          :curent-limit="pagination.itemsPerPage"
+          @limit-change="handleLimitChange"
+          class="filter"
+        />
       </div>
     </div>
   </article>
 </template>
 
 <style lang="scss" scoped>
-@mixin fontStyle {
-  width: calc(100% / 4);
-  font-family: "Gothampro-normal";
-  font-size: 14px;
-  line-height: 130%;
-  letter-spacing: 0;
-}
-
 .tableWrapper {
   width: 100%;
   padding: 48px;
   box-sizing: border-box;
+
+  @media (min-width: 360px) and (max-width: 768px) {
+    & {
+      padding: 25px;
+    }
+  }
 }
 
 .tableContainer {
@@ -202,114 +149,74 @@ function toggleCheck() {
   border-radius: 16px;
   padding: 24px;
   gap: 24px;
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      padding: 20px;
+      gap: 20px;
+    }
+  }
 }
 
 .searchWrapper {
   display: flex;
   justify-content: space-between;
 
+  @media (min-width: 761px) {
+    line-height: 150%;
+  }
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    & {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
   h2 {
     font-family: "Gothampro-bold";
     color: var(--vt-f-dark-grey);
     font-size: 32px;
+
+    @media (min-width: 360px) and (max-width: 560px) {
+      & {
+        font-size: 24px;
+        line-height: 100%;
+      }
+    }
   }
 }
 
 .formWrapper {
   display: flex;
   gap: 16px;
-}
-
-.filterWrapper {
-  display: flex;
-  justify-content: stretch;
-  width: 100%;
-  gap: 91px;
-
-  div {
-    display: flex;
-    width: calc((100% / 3) - (16px * 3) - 13px);
+  @media (min-width: 761px) {
+    height: 60px;
   }
-}
-
-.table {
-  display: flex;
-  flex-direction: column;
-  margin-top: 24px;
-}
-
-.tableHeader {
-  display: flex;
-  flex-direction: row;
-  background-color: var(--vt-c-light-grey);
-}
-
-.header {
-  width: calc(100% / 4);
-  font-family: "Gothampro-medium";
-  color: var(--vt-c-dark-grey);
-  font-size: 16px;
-  line-height: 130%;
-  letter-spacing: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  cursor: pointer;
-  padding: 18px 16px;
-
-  &:hover {
-    color: var(--vt-c-grey-1);
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      flex-direction: column;
+      gap: 12px;
+    }
   }
-}
-
-.icons {
-  margin-inline-start: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.tableBody {
-  display: flex;
-  flex-direction: column;
-}
-
-.tableItem {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  border-bottom: 1px solid var(--vt-c-light-grey-1);
-  padding: 18px 16px;
-  gap: 32px;
-}
-
-.regionWrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  width: calc(100% / 4);
-}
-
-.nameWrapper {
-  @include fontStyle;
-}
-
-.adressWrapper {
-  @include fontStyle;
-}
-
-.levelWrapper {
-  gap: 4px;
-}
-
-.checkboxWrapper {
-  margin-inline-end: 11.6px;
 }
 
 .pagination {
   display: flex;
   justify-content: space-between;
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      flex-direction: column;
+      justify-content: stretch;
+      .paginationItem {
+        width: 100%;
+      }
+      gap: 12px;
+      .filter {
+        margin-inline-start: auto;
+      }
+    }
+  }
 }
 </style>

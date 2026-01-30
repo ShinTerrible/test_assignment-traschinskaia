@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import Calendar from "../calender/Calendar.vue";
+import { tFilerData } from "../../features/tableFilterApi/types";
 
 interface Props {
-  data: string[] | "calendar";
+  filterByData?: tFilerData;
+  filterByStatus?: string[];
+  calendar?: boolean; // изменяем тип на boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  data: () => [
-    "Астана",
-    "Берлин",
-    "Владивосток",
-    "Катар",
-    "Астана",
-    "Берлин",
-    "Владивосток",
-    "Катар",
-  ],
+const props = defineProps<Props>();
+
+// Определяем тип дропдауна
+const dropdownType = computed(() => {
+  if (props.calendar) return "calendar";
+  if (props.filterByStatus) return "status";
+  if (props.filterByData) return "data";
+  return "unknown";
 });
 
-const dataState = ref(props.data[0]);
+// Эмитим разные события
+const emit = defineEmits<{
+  "date-selected": [value: Date];
+  "data-selected": [value: string];
+  "status-selected": [value: string];
+}>();
+
 const selectState = ref("");
 const selectElement = ref<HTMLElement | null>(null);
 const monthNames = [
@@ -42,18 +48,24 @@ const initialDate = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.
 
 let selectedDateDisplay = ref(initialDate);
 const selectedDate = ref<Date>(today);
+const dataState = ref(
+  dropdownType.value === "status"
+    ? props.filterByStatus?.[0] || "Все статусы"
+    : dropdownType.value === "data"
+      ? "Все виды"
+      : initialDate,
+);
 
 function updateDisplayFromDate(date: Date) {
   selectedDateDisplay.value = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-function handleSaveDate(date) {
-  selectedDate.value = date;
-  updateDisplayFromDate(date);
-  selectState.value = "";
-  // date.push(startDate.value.toISOString().split('T')[0]) //для запроса
-  // emit('date-selected', date); эмит события родителю для запроса
-}
+watch(
+  () => props,
+  (newData) => {
+  },
+  { immediate: true },
+);
 
 watch(
   selectedDate,
@@ -68,9 +80,41 @@ const toggleSelect = () => {
 };
 
 const selectItem = (item: string) => {
+
   dataState.value = item;
   selectState.value = "";
+
+  // Эмитим соответствующее событие
+  switch (dropdownType.value) {
+    case "calendar":
+      // Если это календарь, item может быть датой в строковом формате
+      try {
+        const date = new Date(item);
+        if (!isNaN(date.getTime())) {
+          emit("date-selected", date);
+        }
+      } catch (e) {
+        console.error("Ошибка парсинга даты:", e);
+      }
+      break;
+
+    case "status":
+      emit("status-selected", item);
+      break;
+
+    case "data":
+      emit("data-selected", item);
+      break;
+  }
 };
+
+
+function handleSaveDate(date: Date) {
+  selectedDate.value = date;
+  updateDisplayFromDate(date);
+  selectState.value = "";
+  emit("date-selected", date);
+}
 
 const handleCloseOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
@@ -94,28 +138,36 @@ const handleCloseOutside = (event: MouseEvent) => {
     <div class="select" :data-state="selectState" ref="selectElement">
       <div
         class="selectTitle"
-        :data-default="props.data[0]"
+        :data-default="'Все статусы'"
         @click="toggleSelect"
-        v-if="Array.isArray(props.data)"
+        v-if="props.filterByStatus"
       >
         {{ dataState }}
       </div>
 
       <div
         class="selectTitle"
-        :data-default="props.data[0]"
+        :data-default="'Все виды'"
         @click="toggleSelect"
-        v-if="props.data === 'calendar'"
+        v-if="props.filterByData"
+      >
+        {{ dataState }}
+      </div>
+
+      <div
+        class="selectTitle"
+        :data-default="initialDate"
+        @click="toggleSelect"
+        v-if="props.calendar"
       >
         {{ selectedDateDisplay }}
       </div>
 
-      <div class="selectContent">
+      <div class="selectContent" v-if="props.filterByStatus">
         <label
           :for="'singleSelect' + index"
           class="selectLabel"
-          v-if="Array.isArray(props.data)"
-          v-for="(item, index) in props.data"
+          v-for="(item, index) in props.filterByStatus"
           :key="index"
           @click="selectItem(item)"
         >
@@ -127,9 +179,48 @@ const handleCloseOutside = (event: MouseEvent) => {
             :checked="dataState === item"
           />{{ item }}</label
         >
+      </div>
 
+      <div class="selectContent" v-if="props.filterByData">
+        <span>Федеральные округа</span>
+        <label
+          :for="'singleSelect' + index"
+          class="selectLabel"
+          v-for="(item, index) in props.filterByData.federals"
+          :key="index"
+          @click="selectItem(item.name)"
+        >
+          <input
+            :id="'singleSelect' + index"
+            class="selectInput"
+            type="radio"
+            name="singleSelect"
+            :checked="dataState === item.name"
+          />{{ item.name }}</label
+        >
+        <span>Регионы</span>
+
+        <label
+          :for="'singleSelect' + index"
+          class="selectLabel"
+          v-for="(item, index) in props.filterByData.regions.filter(
+            (item) => item.id !== 86,
+          )"
+          :key="index"
+          @click="selectItem(item.name)"
+        >
+          <input
+            :id="'singleSelect' + index"
+            class="selectInput"
+            type="radio"
+            name="singleSelect"
+            :checked="dataState === item.name"
+          />{{ item.name }}</label
+        >
+      </div>
+
+      <div class="selectContent calendar" v-if="props.calendar">
         <Calendar
-          v-if="props.data === 'calendar'"
           class="calendar"
           v-model="selectedDate"
           @save="handleSaveDate"
@@ -140,20 +231,36 @@ const handleCloseOutside = (event: MouseEvent) => {
 </template>
 
 <style lang="scss" scoped>
+
 .form {
-  width: 100%;
   position: relative;
   box-sizing: border-box;
+  width: 100%; 
+  height: 100%; 
 }
 
 .select {
-  width: 100%;
-  min-width: 230px;
+  min-width: 208px;
+  width: 100%; 
   height: 40px;
   font-family: "Gothampro-normal";
   font-size: 16px;
   line-height: 130%;
   border: var(--vt-c-light-grey-1);
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      min-width: 120px; 
+      max-width: 100%;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      min-width: 100%;
+      width: 100%;
+    }
+  }
 
   &[data-state="active"] {
     .selectTitle {
@@ -184,6 +291,27 @@ const handleCloseOutside = (event: MouseEvent) => {
   border: 1px solid var(--vt-c-light-grey-1);
   cursor: pointer;
   z-index: 2;
+  overflow: hidden;
+  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; 
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      padding: 12px 30px 12px 12px;
+      font-size: 14px;
+      padding-right: 30px;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      padding: 12px 40px 12px 16px;
+      font-size: 14px;
+    }
+  }
 
   &:hover {
     background-color: var(--vt-f-white);
@@ -192,20 +320,29 @@ const handleCloseOutside = (event: MouseEvent) => {
   &::before,
   &::after {
     content: "";
-
     position: absolute;
     top: 70%;
     right: 30px;
-
     display: block;
     width: 10px;
     height: 2px;
-
     transition: all 0.3s ease-out;
-
     background-color: var(--vt-c-grey-1);
-
     transform: translate(-3px, -50%) rotate(45deg);
+
+    @media (min-width: 561px) and (max-width: 760px) {
+      & {
+        top: 60%;
+        right: 13px;
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 560px) {
+      & {
+        top: 60%;
+        right: 20px;
+      }
+    }
   }
   &::after {
     transform: translate(3px, -50%) rotate(-45deg);
@@ -225,7 +362,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   border-radius: 8px;
   background-color: var(--vt-f-white);
   display: none;
-  // max-height: 150px;
+  max-height: 400px;
   overflow-y: scroll;
   border-top: 10px solid transparent;
   border-bottom-left-radius: 5px;
@@ -233,7 +370,21 @@ const handleCloseOutside = (event: MouseEvent) => {
 
   transition: all 0.3s ease-out;
 
-  z-index: 1;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  span {
+    display: block;
+    margin-block: 6px;
+    font-family: "Gothampro-bold";
+    font-size: 18px;
+    line-height: 130%;
+    padding-inline-start: 16px;
+  }
+}
+
+.calendar {
+  max-height: unset;
 }
 
 .selectInput {
@@ -251,10 +402,10 @@ const handleCloseOutside = (event: MouseEvent) => {
 }
 
 .selectLabel {
-  padding: 13px 16px;
+  padding: 18px 16px;
   display: flex;
   align-items: center;
-  height: 40px;
+  min-height: 50px;
   background-color: var(--vt-c-light-grey-2);
   border-radius: 8px;
   transition: all 0.2s ease-out;
@@ -268,6 +419,18 @@ const handleCloseOutside = (event: MouseEvent) => {
 
   &:hover {
     background-color: var(--vt-c-light-grey-1);
+  }
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      font-size: 12px;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      font-size: 12px;
+    }
   }
 }
 </style>
