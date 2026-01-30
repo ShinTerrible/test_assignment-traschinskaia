@@ -6,12 +6,11 @@ import { tFilerData } from "../../features/tableFilterApi/types";
 interface Props {
   filterByData?: tFilerData;
   filterByStatus?: string[];
-  calendar?: boolean; // изменяем тип на boolean
+  calendar?: boolean; 
 }
 
 const props = defineProps<Props>();
 
-// Определяем тип дропдауна
 const dropdownType = computed(() => {
   if (props.calendar) return "calendar";
   if (props.filterByStatus) return "status";
@@ -19,7 +18,6 @@ const dropdownType = computed(() => {
   return "unknown";
 });
 
-// Эмитим разные события
 const emit = defineEmits<{
   "date-selected": [value: Date];
   "data-selected": [value: string];
@@ -84,10 +82,8 @@ const selectItem = (item: string) => {
   dataState.value = item;
   selectState.value = "";
 
-  // Эмитим соответствующее событие
   switch (dropdownType.value) {
     case "calendar":
-      // Если это календарь, item может быть датой в строковом формате
       try {
         const date = new Date(item);
         if (!isNaN(date.getTime())) {

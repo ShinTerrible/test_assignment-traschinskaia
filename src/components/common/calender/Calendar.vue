@@ -37,18 +37,14 @@ const monthNames = [
 const calendarDays = computed(() => generateCalendar());
 
 function generateCalendar() {
-  // первый и последний день месяца
   const firstDayOfTheMonth = new Date(currentYear.value, currentMonth.value, 1);
   const lastDayOfMonth = new Date(currentYear.value, currentMonth.value + 1, 0);
 
-  // день недели для первого дня месяца: 0 - воскресенье
   let startDay = ref(firstDayOfTheMonth.getDay());
 
-  //  недели, где Пн - первый
   startDay.value = (startDay.value + 6) % 7;
   const days = [];
 
-  // предыдущие дни
   for (let i = 0; i < startDay.value; i++) {
     const date = new Date(
       currentYear.value,
@@ -63,7 +59,6 @@ function generateCalendar() {
       isSelected: isSelected(date),
     });
   }
-  // Текущий месяц
   for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
     const date = new Date(currentYear.value, currentMonth.value, i);
 
@@ -75,7 +70,6 @@ function generateCalendar() {
     });
   }
 
-  // полное количества ячеек (6 строк по 7 дней)
   while (days.length % 7 !== 0) {
     const date: Date = new Date(
       currentYear.value,
@@ -103,7 +97,6 @@ function isToday(date: Date) {
 }
 
 function isSelected(date: Date) {
-  // все даты к началу дня для точного сравнения
   const normalizeDate = (d: Date) => {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   };
@@ -147,20 +140,17 @@ function selectDate(day: any) {
 
   selectedDate.value = null;
 
-  // если нет начальной даты или обе даты уже выбраны (создаем новый интервал)
+
   if (!startDate.value || endDate.value) {
     startDate.value = clickedDate;
     endDate.value = null;
     return;
   }
 
-  // если есть только startDate, выбираем endDate
   if (startDate.value && !endDate.value) {
-    //  кликнули дату после startDate
     if (clickedDate >= startDate.value) {
       endDate.value = clickedDate;
     }
-    //  кликнули дату до startDate, меняем их местами
     else {
       endDate.value = startDate.value;
       startDate.value = clickedDate;
@@ -171,7 +161,6 @@ function selectDate(day: any) {
 function isInRange(date: Date) {
   if (!startDate.value || !endDate.value) return false;
 
-  // Приводим все даты к началу дня для точного сравнения
   const normalizeDate = (d: Date) => {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   };
@@ -180,7 +169,6 @@ function isInRange(date: Date) {
   const start = normalizeDate(startDate.value);
   const end = normalizeDate(endDate.value);
 
-  // true только для дней МЕЖДУ startDate и endDate
   return current > start && current < end;
 }
 
