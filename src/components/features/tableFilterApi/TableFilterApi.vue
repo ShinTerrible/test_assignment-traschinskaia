@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from "vue";
-import api from "@/components/entities/school-list-api";
-import TableFilter from "@/components/common/tableFilter/TableFilter.vue";
+import api from "../../entities/school-list-api";
+import TableFilter from "../../common/tableFilter/TableFilter.vue";
 import { tFederals, tFilerData, tRegions } from "./types";
-import { useFilterContext } from "@/components/composables/useFilterContext";
+import { useFilterContext } from "../../composables/useFilterContext";
+
 
 const filterContext = useFilterContext();
 
@@ -33,10 +34,10 @@ async function getTableFilterData() {
     }
 
     allSubjects.value = {
-      regions: regions.value,
-      federals: federals.value,
+      regions: regions.value as tRegions[],
+      federals: federals.value as tFederals[],
     };
-  } catch (err) {
+  } catch (err: any) {
     error.value = err.message;
     console.error("ОШИБКА: ", err);
     regions.value = [];

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import EduLevel from "../eduLevel/EduLevel.vue";
-import IconSortDown from "@/components/icons/IconSortDown.vue";
-import IconSortUp from "@/components/icons/IconSortUp.vue";
+import IconSortDown from "../../icons/IconSortDown.vue";
+import IconSortUp from "../../icons/IconSortUp.vue";
 import Checkbox from "../check/Checkbox.vue";
 import { ref, watch } from "vue";
-import { iSchoolLicense } from "@/components/features/tableApi/types";
+import { iSchoolLicense } from "../../features/tableApi/types";
 
 interface Props {
   data: iSchoolLicense[];
@@ -118,18 +118,49 @@ const levels = onEducationlevel;
   font-size: 14px;
   line-height: 130%;
   letter-spacing: 0;
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    font-size: 12px;
+  }
+}
+
+@mixin wrapperSize {
+  width: calc(100% / 4);
+  cursor: default;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    width: 100%;
+  }
+}
+
+@mixin columnFlow {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin rowFlow {
+  display: flex;
+  flex-direction: row;
 }
 
 .table {
-  display: flex;
-  flex-direction: column;
+  @include columnFlow;
   margin-top: 24px;
 }
 
 .tableHeader {
-  display: flex;
-  flex-direction: row;
+  @include rowFlow;
   background-color: var(--vt-f-white);
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    display: none;
+  }
 }
 
 .header {
@@ -139,12 +170,15 @@ const levels = onEducationlevel;
   font-size: 16px;
   line-height: 130%;
   letter-spacing: 0;
-  display: flex;
-  flex-direction: row;
+  @include rowFlow;
   justify-content: flex-start;
   align-items: center;
   cursor: pointer;
   padding: 18px 16px;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    display: none;
+  }
 
   &:hover {
     color: var(--vt-c-grey-1);
@@ -153,50 +187,164 @@ const levels = onEducationlevel;
 
 .icons {
   margin-inline-start: auto;
-  display: flex;
-  flex-direction: column;
+  @include columnFlow;
   gap: 4px;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    display: none;
+  }
 }
 
 .tableBody {
-  display: flex;
-  flex-direction: column;
+  @include columnFlow;
 }
 
 .tableItem {
-  display: flex;
-  flex-direction: row;
+  @include rowFlow;
   justify-content: flex-start;
   align-items: center;
   border-bottom: 1px solid var(--vt-c-light-grey-1);
   padding: 18px 16px;
   gap: 32px;
+  cursor: unset;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    & {
+      min-width: 300px;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--vt-c-light-grey-1);
+      background-color: var(--vt-f-white);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      div {
+        display: flex;
+        align-items: flex-start;
+        min-height: 24px;
+      }
+    }
+  }
 }
 
 .regionWrapper {
-  display: flex;
-  flex-direction: row;
+  @include fontStyle;
+  font-family: "Gothampro-medium";
+  @include rowFlow;
   justify-content: flex-start;
-  width: calc(100% / 4);
+  @include wrapperSize;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    order: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vt-c-dark-grey-1);
+  }
 }
 
 .nameWrapper {
   @include fontStyle;
-  width: calc(100% / 4);
+  @include wrapperSize;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    order: 2;
+    position: relative;
+
+    &::before {
+      content: "Название:";
+      display: block;
+      font-family: "Gothampro-medium";
+      color: var(--vt-c-grey-1);
+      margin-bottom: 4px;
+    }
+  }
 }
 
 .adressWrapper {
   @include fontStyle;
-  width: calc(100% / 4);
+  @include wrapperSize;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    order: 3;
+
+    &::before {
+      content: "Адрес:";
+      display: block;
+      font-family: "Gothampro-medium";
+      color: var(--vt-c-grey-1);
+      margin-bottom: 4px;
+    }
+  }
 }
 
 .levelWrapper {
   gap: 4px;
   overflow: hidden;
-  width: calc(100% / 4);
+  @include wrapperSize;
+
+  display: flex;
+  flex-wrap: wrap;
+  @media (min-width: 761px) {
+    & {
+      flex-direction: row;
+    }
+  }
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      flex-direction: column;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    order: 4;
+    &::before {
+      content: "Уровни:";
+      display: block;
+      width: 100%;
+      font-family: "Gothampro-medium";
+      color: var(--vt-c-grey-1);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+  }
 }
 
 .checkboxWrapper {
   margin-inline-end: 11.6px;
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    display: none;
+  }
+}
+
+@media (min-width: 360px) and (max-width: 760px) {
+  .tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .table {
+    min-width: 340px;
+  }
+
+  .tableHeader,
+  .tableItem {
+    min-width: 340px;
+  }
+
+  .header,
+  .regionWrapper,
+  .nameWrapper,
+  .adressWrapper,
+  .levelWrapper {
+    min-width: 140px; // 560px / 4
+    flex-shrink: 0;
+  }
 }
 </style>

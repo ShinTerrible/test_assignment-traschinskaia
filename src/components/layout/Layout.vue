@@ -22,7 +22,7 @@ function handleInputUpdate(value: string) {
 }
 
 function handleFiltersChanged(filters: any) {
-  console.log('Фильтр изменился: ', filters)
+  console.log("Фильтр изменился: ", filters);
   filterContext.updateFilters(filters);
 }
 
@@ -89,10 +89,12 @@ watch(
         <Pagination
           :current-page="filterContext.filterState.value.page || 1"
           @page-change="handlePageChange"
+          class="paginationItem"
         />
         <Filter
           :limit="filterContext.filterState.value.limit || 10"
           @limit-change="handleLimitChange"
+          class="filter"
         />
       </div>
     </div>
@@ -100,18 +102,16 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-@mixin fontStyle {
-  width: calc(100% / 4);
-  font-family: "Gothampro-normal";
-  font-size: 14px;
-  line-height: 130%;
-  letter-spacing: 0;
-}
-
 .tableWrapper {
   width: 100%;
   padding: 48px;
   box-sizing: border-box;
+
+  @media (min-width: 360px) and (max-width: 768px) {
+    & {
+      padding: 25px;
+    }
+  }
 }
 
 .tableContainer {
@@ -122,38 +122,74 @@ watch(
   border-radius: 16px;
   padding: 24px;
   gap: 24px;
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      padding: 20px;
+      gap: 20px;
+    }
+  }
 }
 
 .searchWrapper {
   display: flex;
   justify-content: space-between;
 
+  @media (min-width: 761px) {
+    line-height: 150%;
+  }
+
+  @media (min-width: 360px) and (max-width: 760px) {
+    & {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
   h2 {
     font-family: "Gothampro-bold";
     color: var(--vt-f-dark-grey);
     font-size: 32px;
+
+    @media (min-width: 360px) and (max-width: 560px) {
+      & {
+        font-size: 24px;
+        line-height: 100%;
+      }
+    }
   }
 }
 
 .formWrapper {
   display: flex;
   gap: 16px;
-}
-
-.filterWrapper {
-  display: flex;
-  justify-content: stretch;
-  width: 100%;
-  gap: 91px;
-
-  div {
-    display: flex;
-    width: calc((100% / 3) - (16px * 3) - 13px);
+  @media (min-width: 761px) {
+    height: 60px;
+  }
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      flex-direction: column;
+      gap: 12px;
+    }
   }
 }
 
 .pagination {
   display: flex;
   justify-content: space-between;
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      flex-direction: column;
+      justify-content: stretch;
+      .paginationItem {
+        width: 100%;
+      }
+      gap: 12px;
+      .filter {
+        margin-inline-start: auto;
+      }
+    }
+  }
 }
 </style>

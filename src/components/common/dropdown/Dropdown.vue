@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import Calendar from "../calender/Calendar.vue";
-import { tFilerData } from "@/components/features/tableFilterApi/types";
+import { tFilerData } from "../../features/tableFilterApi/types";
 
 interface Props {
   filterByData?: tFilerData;
@@ -59,15 +59,6 @@ const dataState = ref(
 function updateDisplayFromDate(date: Date) {
   selectedDateDisplay.value = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 }
-
-// function handleSaveDate(date) {
-//   selectedDate.value = date;
-//   updateDisplayFromDate(date);
-//   selectState.value = "";
-
-//   // date.push(startDate.value.toISOString().split('T')[0]) //для запроса
-//   // emit('date-selected', date); эмит события родителю для запроса
-// }
 
 watch(
   () => props,
@@ -243,20 +234,41 @@ const handleCloseOutside = (event: MouseEvent) => {
 </template>
 
 <style lang="scss" scoped>
+// @media (min-width: 360px) and (max-width: 560px) {
+//   & {
+
+//   }
+// }
+
 .form {
-  width: 100%;
   position: relative;
   box-sizing: border-box;
+  width: 100%; // Добавляем
+  height: 100%; // Добавляем
 }
 
 .select {
-  width: 100%;
-  min-width: 230px;
+  min-width: 208px;
+  width: 100%; // Добавляем
   height: 40px;
   font-family: "Gothampro-normal";
   font-size: 16px;
   line-height: 130%;
   border: var(--vt-c-light-grey-1);
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      min-width: 120px; // Уменьшаем минимальную ширину
+      max-width: 100%; // Ограничиваем максимальную ширину
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      min-width: 100%;
+      width: 100%;
+    }
+  }
 
   &[data-state="active"] {
     .selectTitle {
@@ -287,6 +299,27 @@ const handleCloseOutside = (event: MouseEvent) => {
   border: 1px solid var(--vt-c-light-grey-1);
   cursor: pointer;
   z-index: 2;
+  overflow: hidden;
+  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* Количество строк */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      padding: 12px 30px 12px 12px;
+      font-size: 14px;
+      padding-right: 30px;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      padding: 12px 40px 12px 16px;
+      font-size: 14px;
+    }
+  }
 
   &:hover {
     background-color: var(--vt-f-white);
@@ -295,20 +328,29 @@ const handleCloseOutside = (event: MouseEvent) => {
   &::before,
   &::after {
     content: "";
-
     position: absolute;
     top: 70%;
     right: 30px;
-
     display: block;
     width: 10px;
     height: 2px;
-
     transition: all 0.3s ease-out;
-
     background-color: var(--vt-c-grey-1);
-
     transform: translate(-3px, -50%) rotate(45deg);
+
+    @media (min-width: 561px) and (max-width: 760px) {
+      & {
+        top: 60%;
+        right: 13px;
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 560px) {
+      & {
+        top: 60%;
+        right: 20px;
+      }
+    }
   }
   &::after {
     transform: translate(3px, -50%) rotate(-45deg);
@@ -336,7 +378,8 @@ const handleCloseOutside = (event: MouseEvent) => {
 
   transition: all 0.3s ease-out;
 
-  z-index: 1;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
   span {
     display: block;
@@ -384,6 +427,18 @@ const handleCloseOutside = (event: MouseEvent) => {
 
   &:hover {
     background-color: var(--vt-c-light-grey-1);
+  }
+
+  @media (min-width: 561px) and (max-width: 760px) {
+    & {
+      font-size: 12px;
+    }
+  }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    & {
+      font-size: 12px;
+    }
   }
 }
 </style>

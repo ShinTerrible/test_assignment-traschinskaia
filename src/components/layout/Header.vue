@@ -28,6 +28,12 @@ import LogoInfo from "../icons/LogoInfo.vue";
   flex-direction: column;
   height: 372px;
   gap: 48px;
+
+
+
+  @media (min-width: 360px) and (max-width: 768px) {
+    padding: 38px;
+  }
 }
 
 .logoWrapper {
@@ -51,6 +57,12 @@ import LogoInfo from "../icons/LogoInfo.vue";
   line-height: 130%;
   color: var(--vt-c-dark-grey);
   text-align: end;
+  
+  @media (min-width: 360px) and (max-width: 768px) {
+    & {
+      font-size: 12px;
+    }
+  }
 }
 
 .title {
@@ -60,5 +72,12 @@ import LogoInfo from "../icons/LogoInfo.vue";
   flex-grow: 1;
   font-weight: 700;
   align-content: end;
+
+  @media (min-width: 360px) and (max-width: 768px) {
+    & {
+      font-size: 45px;
+      line-height: 90%;
+    }
+  }
 }
 </style>

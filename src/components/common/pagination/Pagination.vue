@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import IconArrowLeft from "@/components/icons/IconArrowLeft.vue";
+import IconArrowLeft from "../../icons/IconArrowLeft.vue";
 import Button from "../buttons/Button.vue";
-import IconArrowRight from "@/components/icons/IconArrowRight.vue";
+import IconArrowRight from "../../icons/IconArrowRight.vue";
 </script>
 
 <template>
@@ -26,6 +26,13 @@ import IconArrowRight from "@/components/icons/IconArrowRight.vue";
 .navigation {
   display: flex;
   flex-direction: row;
+
+  @media (min-width: 360px) and (max-width: 768px) {
+    & {
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
 }
 
 .pagination {

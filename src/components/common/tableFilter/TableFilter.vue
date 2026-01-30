@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import Dropdown from "../dropdown/Dropdown.vue";
-import { tFilerData } from "@/components/features/tableFilterApi/types";
-import { useFilterContext } from "@/components/composables/useFilterContext";
+import { useFilterContext } from "../../composables/useFilterContext";
+import { tFilerData } from "../../features/tableFilterApi/types";
 
 const filterContext = useFilterContext();
 
@@ -57,18 +57,21 @@ function handleDataSelect(data: string) {
 
 <template>
   <div class="filterWrapper">
-    <div>
-      <Dropdown calendar @date-selected="handleDateSelect" />
-    </div>
-    <div>
-      <Dropdown :filter-by-data="subject" @data-selected="handleDataSelect" />
-    </div>
-    <div>
-      <Dropdown
-        :filter-by-status="status"
-        @status-selected="handleStatusSelect"
-      />
-    </div>
+    <Dropdown
+      class="dropdown-item"
+      calendar
+      @date-selected="handleDateSelect"
+    />
+    <Dropdown
+      class="dropdown-item"
+      :filter-by-data="subject"
+      @data-selected="handleDataSelect"
+    />
+    <Dropdown
+      class="dropdown-item"
+      :filter-by-status="status"
+      @status-selected="handleStatusSelect"
+    />
   </div>
 </template>
 
@@ -77,11 +80,20 @@ function handleDataSelect(data: string) {
   display: flex;
   justify-content: stretch;
   width: 100%;
-  gap: 91px;
+  gap: 16px;
 
-  div {
-    display: flex;
-    width: calc((100% / 3) - (16px * 3) - 13px);
+  @media (min-width: 561px) and (max-width: 760px) {
+    gap: 8px;
   }
+
+  @media (min-width: 360px) and (max-width: 560px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.dropdown-item {
+  flex: 1;
+  min-width: 0; // Важно для сжатия текста
 }
 </style>

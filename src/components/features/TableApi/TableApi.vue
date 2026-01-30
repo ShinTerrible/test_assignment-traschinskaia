@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import Table from "@/components/common/table/Table.vue";
+import Table from "../../common/table/Table.vue";
 import { onMounted, ref } from "vue";
-import api from "@/components/entities/school-list-api";
+import api from "../../entities/school-list-api";
 import { iSchoolLicense } from "./types";
-import Button from "@/components/common/buttons/Button.vue";
+import Button from "../../common/buttons/Button.vue";
 
 const data = ref<iSchoolLicense[] | []>();
 const loading = ref(false);
@@ -17,7 +17,7 @@ async function getTableData() {
     const response = await api.get("/schools");
     data.value = response.data.data.list;
     // console.log("Данные получены:", response.data);
-  } catch (err) {
+  } catch (err: any) {
     error.value = err.message;
     console.error("ОШИБКА: ", err);
     data.value = [];

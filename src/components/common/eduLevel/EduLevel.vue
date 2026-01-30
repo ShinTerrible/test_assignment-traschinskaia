@@ -9,12 +9,15 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <span class="levelWrapper">{{ level }}</span>
+  <div><span class="levelWrapper">{{ level }}</span></div>
 </template>
 
 <style lang="scss" scoped>
+div{
+  max-width: 100px;
+}
 .levelWrapper {
-  display: inline-block;
+  display: block;
   padding: 4px 6px;
   border-radius: 8px;
   border: 1px solid var(--vt-c-grey-1-tone);
@@ -25,6 +28,6 @@ const props = withDefaults(defineProps<Props>(), {
   font-size: 12px;
   margin-inline: 2px;
   margin-block-end: 4px;
-  width:max-content;
+  width: 100%;
 }
 </style>
