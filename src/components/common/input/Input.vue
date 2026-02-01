@@ -56,12 +56,12 @@ function emitFilters() {
   align-items: center;
   font-size: 16px;
   font-family: "Gothampro-normal";
-  max-height: 60px
- 
+  max-height: 60px;
+  cursor: pointer;
+
 
   svg {
     color: var(--vt-c-dark-grey);
-    cursor: pointer;
     width: 22px;
     height: 22px;
     min-width: 22px;
