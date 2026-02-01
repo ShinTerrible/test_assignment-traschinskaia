@@ -72,9 +72,10 @@ function handleDateSelect(date: Date) {
 function handleStatusSelect(statusValue: string) {
   const statusMap: Record<string, string> = {
     Все: "all",
-    Действующее: "active",
-    Недействующее: "inactive",
+    Действующее: "Действующее",
+    Недействующее: "Недействующее",
   };
+    filterContext.updateFilter("status", statusMap[statusValue]);
 }
 
 function handleDataSelect(item: string) {

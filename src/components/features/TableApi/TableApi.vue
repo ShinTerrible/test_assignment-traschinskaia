@@ -22,7 +22,9 @@ async function getFirstTableData() {
   try {
     const response = await api.get("/schools?count=10");
 
-    data.value = response.data.data.list;
+    // data.value = response.data.data.list;
+    const list = response.data.data.list;
+    filterContext.setTableDate(list);
 
     if (response.data.data.page) {
       filterContext.updateFilter("page", response.data.data.page);
@@ -50,7 +52,10 @@ async function getFilteredTableData() {
     const queryString = filterContext.queryString.value;
     const url = `/schools${queryString ? `?${queryString}` : ""}`;
     const response = await api.get(url);
-    data.value = response.data.data.list;
+
+    // data.value = response.data.data.list;
+    const list = response.data.data.list;
+    filterContext.setTableDate(list);
 
     filterContext.updateFilter("page", response.data.data.page);
   } catch (err: any) {
@@ -72,7 +77,7 @@ async function getTableData() {
 }
 
 watch(
-  () => filterContext.queryString.value,
+() => filterContext.serverQueryString.value,
   (newQuery, oldQuery) => {
     if (newQuery !== oldQuery) {
       hasFiltersChanged.value = true;
@@ -108,7 +113,8 @@ onMounted(() => {
 
   <div v-else-if="error" class="error">Ошибка: {{ error }}</div>
 
-  <Table v-else-if="data && data?.length > 0" :data="data" />
-
-  <div v-else class="no-data">Нет данных для отображения</div>
+  <Table
+    v-if="filterContext.clientFilterData.value.length > 0"
+    :data="filterContext.clientFilterData.value"
+  />
 </template>

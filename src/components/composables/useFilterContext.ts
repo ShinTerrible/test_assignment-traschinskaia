@@ -6,8 +6,10 @@ import {
   computed,
   type Ref,
   type InjectionKey,
+  ComputedRef,
 } from "vue";
 import { FilterState } from "../features/tableFilterApi/types";
+import { tSchoolLicense } from "../features/tableApi/types";
 
 const DEFAULT_FILTERS: FilterState = {
   page: 1,
@@ -24,9 +26,14 @@ const DEFAULT_FILTERS: FilterState = {
 interface FilterContextValue {
   filterState: Readonly<Ref<FilterState>>;
 
+  tableData: Readonly<Ref<tSchoolLicense[] | []>>;
+  setTableDate: (data: tSchoolLicense[]) => void;
+  clientFilterData: ComputedRef<tSchoolLicense[]>;
+
   defaultFilters: FilterState;
 
   queryString: Readonly<Ref<string>>;
+  serverQueryString: Readonly<Ref<string>>;
 
   updateFilters: (newFilters: Partial<FilterState>) => void;
   resetFilters: () => void;
@@ -50,12 +57,35 @@ export function provideFilterContext(initialFilters?: Partial<FilterState>) {
   });
 
   const isInitialized = ref(false);
+  const tableData = ref<tSchoolLicense[] | []>([]);
 
+  const clientFilterData = computed(() => {
+    const sourceData = tableData.value;
+    const currentStatus = filterState.value.status;
+
+    if (!currentStatus || currentStatus === "all") {
+      return sourceData;
+    }
+
+    return sourceData.filter((item) => {
+      const itemStatus = item.supplements?.[0]?.status?.name;
+      return itemStatus === currentStatus;
+    });
+  });
+
+  function setTableDate(data: tSchoolLicense[]) {
+    tableData.value = data;
+  }
   const queryString = computed(() => {
     const params = new URLSearchParams();
 
     Object.entries(filterState.value).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== "") {
+      if (
+        key !== "status" &&
+        value !== null &&
+        value !== undefined &&
+        value !== ""
+      ) {
         if (key === "date" && value instanceof Date) {
           params.append(key, value.toISOString().split("T")[0]);
         } else {
@@ -64,6 +94,21 @@ export function provideFilterContext(initialFilters?: Partial<FilterState>) {
       }
     });
 
+    return params.toString();
+  });
+
+  const serverQueryString = computed(() => {
+    const params = new URLSearchParams();
+    Object.entries(filterState.value).forEach(([key, value]) => {
+      if (
+        key !== "status" &&
+        value !== null &&
+        value !== undefined &&
+        value !== ""
+      ) {
+        params.append(key, String(value));
+      }
+    });
     return params.toString();
   });
 
@@ -106,7 +151,11 @@ export function provideFilterContext(initialFilters?: Partial<FilterState>) {
     filterState: readonly(filterState),
     defaultFilters: DEFAULT_FILTERS,
     queryString: readonly(queryString),
+    serverQueryString: readonly(serverQueryString),
     isInitialized: readonly(isInitialized),
+    tableData: tableData,
+    setTableDate,
+    clientFilterData,
     updateFilters,
     resetFilters,
     updateFilter,
