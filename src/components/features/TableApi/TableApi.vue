@@ -5,6 +5,7 @@ import api from "../../entities/school-list-api";
 
 import { useFilterContext } from "../../composables/useFilterContext";
 import { tSchoolLicense } from "./types";
+import Preloader from "@/components/common/preloader/Preloader.vue";
 
 const filterContext = useFilterContext();
 
@@ -53,7 +54,6 @@ async function getFilteredTableData() {
     const url = `/schools${queryString ? `?${queryString}` : ""}`;
     const response = await api.get(url);
 
-    // data.value = response.data.data.list;
     const list = response.data.data.list;
     filterContext.setTableDate(list);
 
@@ -109,16 +109,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="loading" class="loading">Загрузка данных...</div>
+  <Preloader v-if="loading"/>
 
   <div v-else-if="error && !filterContext.clientFilterData.value" class="error">
     Ошибка: {{ error }}
   </div>
 
   <Table
-    v-if="filterContext.clientFilterData.value.length > 0"
+    v-else-if="filterContext.clientFilterData.value.length > 0"
     :data="filterContext.clientFilterData.value"
   />
 
-  <div v-else class="error">Ничего не найдено</div>
+  <div v-else-if="filterContext.clientFilterData.value.length === 0" class="error">Ничего не найдено</div>
 </template>

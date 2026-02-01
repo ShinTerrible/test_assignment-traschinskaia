@@ -93,11 +93,6 @@ function handleDataSelect(item: string) {
   }
 }
 
-// watch(
-//   () => filterContext.filterState.value,
-//   () => {},
-// );
-
 onMounted(() => {
   getTableFilterData();
 });

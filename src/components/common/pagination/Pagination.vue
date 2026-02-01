@@ -18,7 +18,7 @@ const emit = defineEmits<Emit>();
 
 const visiblePages = computed(() => {
   const pages = [];
-  const maxVisible = 5; 
+  const maxVisible = 5;
   const half = Math.floor(maxVisible / 2); // 2
 
   let start = props.currentPage - half;
@@ -96,13 +96,12 @@ function goToLastPage() {
     </Button>
 
     <ul class="pagination">
-      <li v-for="page in visiblePages" :key="page">
-        <a
-          href="#"
-          @click.prevent="goToPage(page)"
-          :class="{ active: currentPage === page }"
-          >{{ page }}</a
-        >
+      <li
+        v-for="page in visiblePages"
+        :key="page"
+        :class="{ active: currentPage === page }"
+      >
+        <a href="#" @click.prevent="goToPage(page)">{{ page }}</a>
       </li>
     </ul>
 
@@ -166,6 +165,10 @@ function goToLastPage() {
     cursor: pointer;
     padding: auto;
     border-radius: 8px;
+
+    &.active {
+      background-color: var(--vt-f-white);
+    }
 
     &:hover {
       background-color: var(--vt-f-white);

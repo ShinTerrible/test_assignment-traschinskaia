@@ -1,19 +1,3 @@
-<template>
-  <div class="inputContainer">
-    <label for="search" class="label">
-      <input
-        placeholder="Поиск"
-        id="search"
-        class="input"
-        v-model="inputState"
-        @keyup.enter="emitFilters"
-        @click="emitFilters"
-      />
-    </label>
-    <IconSearch class="searchIcon" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import IconSearch from "../../icons/IconSearch.vue";
 import { ref, watch } from "vue";
@@ -44,6 +28,20 @@ function emitFilters() {
 }
 </script>
 
+<template>
+  <div class="inputContainer">
+    <label for="search" class="label" @keyup.enter="emitFilters">
+      <input
+        placeholder="Поиск"
+        id="search"
+        class="input"
+        v-model="inputState"
+      />
+    </label>
+    <IconSearch class="searchIcon" @click="emitFilters" />
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .inputContainer {
   box-sizing: content-box;
@@ -58,7 +56,6 @@ function emitFilters() {
   font-family: "Gothampro-normal";
   max-height: 60px;
   cursor: pointer;
-
 
   svg {
     color: var(--vt-c-dark-grey);

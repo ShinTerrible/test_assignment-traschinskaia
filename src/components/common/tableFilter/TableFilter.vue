@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import Dropdown from "../dropdown/Dropdown.vue";
 import { useFilterContext } from "../../composables/useFilterContext";
 import { tFilerData } from "../../features/tableFilterApi/types";
 
 const filterContext = useFilterContext();
 
-const status = ref(["Все", "Действующее", "Недействующее"]);
+const status = ref(["Все статусы", "Действующее", "Недействующее"]);
 
 interface Props {
   subject: tFilerData;
@@ -20,20 +20,6 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-
-const filterState = ref({
-  date: null,
-  region_id: null,
-  federal_id: null,
-});
-
-// watch(filterState, () => {}, { deep: true });
-
-// watch(
-//   () => props.subject,
-//   () => {},
-//   { immediate: true },
-// );
 
 function handleDateSelect(date: Date) {
   emit("date-selected", date);

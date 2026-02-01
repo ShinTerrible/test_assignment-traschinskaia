@@ -8,6 +8,7 @@ interface Props {
   variant: "accent" | "primary" | "secondary";
 }
 
+
 const props = withDefaults(defineProps<Props>(), {
   title: "",
   disabled: false,

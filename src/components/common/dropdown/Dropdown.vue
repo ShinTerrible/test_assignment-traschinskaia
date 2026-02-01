@@ -59,12 +59,6 @@ function updateDisplayFromDate(date: Date) {
   selectedDateDisplay.value = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-// watch(
-//   () => props,
-//   (newData) => {},
-//   { immediate: true },
-// );
-
 watch(
   selectedDate,
   (newDate) => {
