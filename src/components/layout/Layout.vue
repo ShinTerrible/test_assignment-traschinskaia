@@ -7,7 +7,7 @@ import Filter from "../common/filter/Filter.vue";
 import TableApi from "../features/tableApi/TableApi.vue";
 import TableFilterApi from "../features/tableFilterApi/TableFilterApi.vue";
 import { provideFilterContext } from "../composables/useFilterContext";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 
 const filterContext = provideFilterContext();
 
@@ -15,6 +15,7 @@ const pagination = ref({
   totalPages: filterContext.filterState.value.pages_count || 10,
   itemsPerPage: 10,
 });
+const isDownloading = ref(false);
 
 const searchQuery = ref(filterContext.filterState.value.search || "");
 
@@ -39,45 +40,11 @@ function handleLimitChange(limit: number) {
   filterContext.updateFilter("count", limit);
 }
 
-watch(
-  () => filterContext.filterState.value.count,
-  (newLimit) => {
-    if (newLimit) {
-      pagination.value.itemsPerPage = newLimit;
-
-      filterContext.updateFilter("page", 1);
-    }
-  },
-);
-
-watch(
-  () => filterContext.serverQueryString.value,
-  () => {},
-  { deep: true },
-);
-
-watch(
-  () => filterContext.filterState.value.federal_district_id,
-  () => {
-  },
-  { deep: true },
-);
-
-watch(
-  () => filterContext.filterState.value.region_id,
-  () => {
-  },
-  { deep: true },
-);
-
-watch(
-  () => filterContext.filterState.value.search,
-  (newSearch) => {
-    if (newSearch !== searchQuery.value) {
-      searchQuery.value = newSearch || "";
-    }
-  },
-);
+async function handleDownload() {
+  isDownloading.value = true;
+  await filterContext.downloadCSV();
+  isDownloading.value = false;
+}
 </script>
 
 <template>
@@ -91,7 +58,12 @@ watch(
             @update:modelValue="handleInputUpdate"
             @search-change="handleSearch"
           />
-          <Button icon="document" variant="accent" title="Скачать">
+          <Button
+            icon="document"
+            variant="accent"
+            title="Скачать"
+            @click="handleDownload"
+          >
             <template #icon>
               <IconDocumentation />
             </template>

@@ -18,7 +18,7 @@ watch(
 );
 
 function onEducationlevel(data: tSchoolLicense) {
-  let levels = data.supplements[0].educational_programs.map((elem) =>
+  let levels = data.supplements[0]?.educational_programs.map((elem) =>
     elem.edu_level.name === "Не определен" ||
     elem.edu_level.name === null ||
     elem.edu_level.name === undefined
