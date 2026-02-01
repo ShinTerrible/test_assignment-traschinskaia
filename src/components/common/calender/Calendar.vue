@@ -7,6 +7,8 @@ import Button from "../buttons/Button.vue";
 
 const emit = defineEmits<{
   save: [value: Date];
+  close: [];
+
 }>();
 
 
@@ -176,6 +178,8 @@ function clearDataState() {
   selectedDate.value = null;
   startDate.value = null;
   endDate.value = null;
+  emit("close");
+
 }
 
 function onSaveData() {
