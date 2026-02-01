@@ -51,7 +51,7 @@ watch(
 );
 
 watch(
-  () => filterContext.queryString.value,
+  () => filterContext.serverQueryString.value,
   () => {},
   { deep: true },
 );

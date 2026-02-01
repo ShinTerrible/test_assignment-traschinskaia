@@ -77,7 +77,7 @@ async function getTableData() {
 }
 
 watch(
-() => filterContext.serverQueryString.value,
+  () => filterContext.serverQueryString.value,
   (newQuery, oldQuery) => {
     if (newQuery !== oldQuery) {
       hasFiltersChanged.value = true;
@@ -111,10 +111,14 @@ onMounted(() => {
 <template>
   <div v-if="loading" class="loading">Загрузка данных...</div>
 
-  <div v-else-if="error" class="error">Ошибка: {{ error }}</div>
+  <div v-else-if="error && !filterContext.clientFilterData.value" class="error">
+    Ошибка: {{ error }}
+  </div>
 
   <Table
     v-if="filterContext.clientFilterData.value.length > 0"
     :data="filterContext.clientFilterData.value"
   />
+
+  <div v-else class="error">Ничего не найдено</div>
 </template>

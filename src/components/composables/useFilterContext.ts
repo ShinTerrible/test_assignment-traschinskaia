@@ -59,18 +59,57 @@ export function provideFilterContext(initialFilters?: Partial<FilterState>) {
   const isInitialized = ref(false);
   const tableData = ref<tSchoolLicense[] | []>([]);
 
-  const clientFilterData = computed(() => {
-    const sourceData = tableData.value;
-    const currentStatus = filterState.value.status;
+  // const clientFilterData = computed(() => {
+  //   const sourceData = tableData.value;
+  //   const currentStatus = filterState.value.status;
 
-    if (!currentStatus || currentStatus === "all") {
-      return sourceData;
+  //   if (!currentStatus || currentStatus === "all") {
+  //     return sourceData;
+  //   }
+
+  //   return sourceData.filter((item) => {
+  //     const itemStatus = item.supplements?.[0]?.status?.name;
+  //     return itemStatus === currentStatus;
+  //   });
+  // });
+
+  const clientFilterData = computed(() => {
+    let data = [...tableData.value];
+    const { status, search } = filterState.value;
+
+    if (status && status !== "all") {
+      data = data.filter((item) => {
+        return item.supplements?.[0]?.status?.name === status;
+      });
     }
 
-    return sourceData.filter((item) => {
-      const itemStatus = item.supplements?.[0]?.status?.name;
-      return itemStatus === currentStatus;
-    });
+    if (search && search.trim() !== "") {
+      const searchQuery = search.toLowerCase().trim();
+
+      data = data.filter((item) => {
+        const name = (item.edu_org?.full_name || "").toLowerCase();
+        const shortName = (item.edu_org?.short_name || "").toLowerCase();
+
+        const address = (
+          item.edu_org?.contact_info?.post_address || ""
+        ).toLowerCase();
+        const email = (item.edu_org?.contact_info?.email || "").toLowerCase();
+        const phone = (item.edu_org?.contact_info?.phone || "").toLowerCase();
+
+        const headName = (item.edu_org?.head?.name || "").toLowerCase();
+
+        return (
+          name.includes(searchQuery) ||
+          shortName.includes(searchQuery) ||
+          address.includes(searchQuery) ||
+          email.includes(searchQuery) ||
+          phone.includes(searchQuery) ||
+          headName.includes(searchQuery)
+        );
+      });
+    }
+
+    return data;
   });
 
   function setTableDate(data: tSchoolLicense[]) {
@@ -82,6 +121,7 @@ export function provideFilterContext(initialFilters?: Partial<FilterState>) {
     Object.entries(filterState.value).forEach(([key, value]) => {
       if (
         key !== "status" &&
+        key !== "search" &&
         value !== null &&
         value !== undefined &&
         value !== ""
@@ -102,6 +142,7 @@ export function provideFilterContext(initialFilters?: Partial<FilterState>) {
     Object.entries(filterState.value).forEach(([key, value]) => {
       if (
         key !== "status" &&
+        key !== "search" &&
         value !== null &&
         value !== undefined &&
         value !== ""

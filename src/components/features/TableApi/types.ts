@@ -12,6 +12,10 @@ export type tSchoolLicense = {
       phone: string;
       email: string;
     };
+    head: {
+      post: string;
+      name: string;
+    };
     region: {
       name: string;
       code: number;
@@ -37,6 +41,7 @@ export type tSchoolLicense = {
     }>;
   }>;
 };
+
 export type tContextResponse = {
   pages_count: number;
   page: number;
