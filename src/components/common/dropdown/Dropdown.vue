@@ -6,7 +6,7 @@ import { tFilerData } from "../../features/tableFilterApi/types";
 interface Props {
   filterByData?: tFilerData;
   filterByStatus?: string[];
-  calendar?: boolean; 
+  calendar?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -46,6 +46,7 @@ const initialDate = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.
 
 let selectedDateDisplay = ref(initialDate);
 const selectedDate = ref<Date>(today);
+
 const dataState = ref(
   dropdownType.value === "status"
     ? props.filterByStatus?.[0] || "Все статусы"
@@ -58,12 +59,11 @@ function updateDisplayFromDate(date: Date) {
   selectedDateDisplay.value = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-watch(
-  () => props,
-  (newData) => {
-  },
-  { immediate: true },
-);
+// watch(
+//   () => props,
+//   (newData) => {},
+//   { immediate: true },
+// );
 
 watch(
   selectedDate,
@@ -78,7 +78,6 @@ const toggleSelect = () => {
 };
 
 const selectItem = (item: string) => {
-
   dataState.value = item;
   selectState.value = "";
 
@@ -104,6 +103,9 @@ const selectItem = (item: string) => {
   }
 };
 
+function handleClose() {
+  selectState.value = "";
+}
 
 function handleSaveDate(date: Date) {
   selectedDate.value = date;
@@ -118,15 +120,15 @@ const handleCloseOutside = (event: MouseEvent) => {
   if (selectElement.value && !selectElement.value.contains(target)) {
     selectState.value = "";
   }
-
-  onMounted(() => {
-    document.addEventListener("click", handleCloseOutside);
-  });
-
-  onUnmounted(() => {
-    document.removeEventListener("click", handleCloseOutside);
-  });
 };
+
+onMounted(() => {
+  document.addEventListener("click", handleCloseOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleCloseOutside);
+});
 </script>
 
 <template>
@@ -161,14 +163,14 @@ const handleCloseOutside = (event: MouseEvent) => {
 
       <div class="selectContent" v-if="props.filterByStatus">
         <label
-          :for="'singleSelect' + index"
+          :for="'federal-' + index"
           class="selectLabel"
           v-for="(item, index) in props.filterByStatus"
-          :key="index"
-          @click="selectItem(item)"
+          :key="'federal-' + index"
+          @click.prevent="selectItem(item)"
         >
           <input
-            :id="'singleSelect' + index"
+            :id="'federal-' + index"
             class="selectInput"
             type="radio"
             name="singleSelect"
@@ -180,14 +182,14 @@ const handleCloseOutside = (event: MouseEvent) => {
       <div class="selectContent" v-if="props.filterByData">
         <span>Федеральные округа</span>
         <label
-          :for="'singleSelect' + index"
+          :for="'region-' + index"
           class="selectLabel"
           v-for="(item, index) in props.filterByData.federals"
-          :key="index"
-          @click="selectItem(item.name)"
+          :key="'region-' + index"
+          @click.prevent="selectItem(item.name)"
         >
           <input
-            :id="'singleSelect' + index"
+            :id="'region-' + index"
             class="selectInput"
             type="radio"
             name="singleSelect"
@@ -219,6 +221,7 @@ const handleCloseOutside = (event: MouseEvent) => {
         <Calendar
           v-model="selectedDate"
           @save="handleSaveDate"
+          @close="handleClose"
         />
       </div>
     </div>
@@ -226,17 +229,16 @@ const handleCloseOutside = (event: MouseEvent) => {
 </template>
 
 <style lang="scss" scoped>
-
 .form {
   position: relative;
   box-sizing: border-box;
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
 }
 
 .select {
   min-width: 208px;
-  width: 100%; 
+  width: 100%;
   height: 40px;
   font-family: "Gothampro-normal";
   font-size: 16px;
@@ -245,7 +247,7 @@ const handleCloseOutside = (event: MouseEvent) => {
 
   @media (min-width: 561px) and (max-width: 760px) {
     & {
-      min-width: 120px; 
+      min-width: 120px;
       max-width: 100%;
     }
   }
@@ -289,7 +291,7 @@ const handleCloseOutside = (event: MouseEvent) => {
   overflow: hidden;
   white-space: nowrap;
   display: -webkit-box;
-  -webkit-line-clamp: 1; 
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
 

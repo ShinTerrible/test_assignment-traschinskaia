@@ -27,13 +27,14 @@ const filterState = ref({
   federal_id: null,
 });
 
-watch(filterState, () => {}, { deep: true });
+// watch(filterState, () => {}, { deep: true });
 
-watch(
-  () => props.subject,
-  () => {},
-  { immediate: true },
-);
+// watch(
+//   () => props.subject,
+//   () => {},
+//   { immediate: true },
+// );
+
 function handleDateSelect(date: Date) {
   emit("date-selected", date);
 }
@@ -43,6 +44,7 @@ function handleStatusSelect(status: string) {
 }
 
 function handleDataSelect(data: string) {
+
   emit("data-selected", data);
 }
 </script>

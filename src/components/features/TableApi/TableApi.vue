@@ -2,9 +2,9 @@
 import Table from "../../common/table/Table.vue";
 import { onMounted, ref, watch } from "vue";
 import api from "../../entities/school-list-api";
-import { tSchoolLicense } from "./types";
 
 import { useFilterContext } from "../../composables/useFilterContext";
+import { tSchoolLicense } from "./types";
 
 const filterContext = useFilterContext();
 
@@ -21,12 +21,11 @@ async function getFirstTableData() {
 
   try {
     const response = await api.get("/schools?count=10");
+
     data.value = response.data.data.list;
 
     if (response.data.data.page) {
       filterContext.updateFilter("page", response.data.data.page);
-      filterContext.updateFilter("total_items", response.data.data.total_count);
-      filterContext.updateFilter("pages_count", response.data.data.pages_count);
     }
     if (response.data.data.per_page || response.data.data.limit) {
       const limit = response.data.data.per_page || response.data.data.limit;
@@ -47,21 +46,20 @@ async function getFilteredTableData() {
   error.value = null;
 
   try {
+    console.log("QUERY STRING: ", filterContext.queryString.value);
     const queryString = filterContext.queryString.value;
-    const url = `/schools${queryString ? `?${queryString}` : "?count=10"}`;
+    const url = `/schools${queryString ? `?${queryString}` : ""}`;
     const response = await api.get(url);
-    filterContext.updateFilter("page", response.data.data.page);
-    filterContext.updateFilter("total_items", response.data.data.total_count);
-    filterContext.updateFilter("pages_count", response.data.data.pages_count);
-
     data.value = response.data.data.list;
+
+    filterContext.updateFilter("page", response.data.data.page);
   } catch (err: any) {
     error.value = err.message;
     console.error("ОШИБКА: ", err);
     data.value = [];
   } finally {
     loading.value = false;
-    hasFiltersChanged.value = false;
+    hasFiltersChanged.value = true;
   }
 }
 
@@ -76,10 +74,6 @@ async function getTableData() {
 watch(
   () => filterContext.queryString.value,
   (newQuery, oldQuery) => {
-    if (isFirstRequest.value) {
-      return;
-    }
-
     if (newQuery !== oldQuery) {
       hasFiltersChanged.value = true;
       getTableData();
@@ -104,18 +98,15 @@ watch(
   { immediate: false },
 );
 
-
 onMounted(() => {
-  getFirstTableData();
+  getTableData();
 });
 </script>
 
 <template>
   <div v-if="loading" class="loading">Загрузка данных...</div>
 
-  <div v-else-if="error" class="error">
-    Ошибка: {{ error }}
-  </div>
+  <div v-else-if="error" class="error">Ошибка: {{ error }}</div>
 
   <Table v-else-if="data && data?.length > 0" :data="data" />
 

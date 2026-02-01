@@ -4,7 +4,7 @@ import Input from "../common/input/Input.vue";
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import Pagination from "../common/pagination/Pagination.vue";
 import Filter from "../common/filter/Filter.vue";
-import TableApi from "../features/TableApi/TableApi.vue";
+import TableApi from "../features/tableApi/TableApi.vue";
 import TableFilterApi from "../features/tableFilterApi/TableFilterApi.vue";
 import { provideFilterContext } from "../composables/useFilterContext";
 import { ref, watch } from "vue";
@@ -58,7 +58,15 @@ watch(
 
 watch(
   () => filterContext.filterState.value.federal_district_id,
-  () => {},
+  () => {
+  },
+  { deep: true },
+);
+
+watch(
+  () => filterContext.filterState.value.region_id,
+  () => {
+  },
   { deep: true },
 );
 

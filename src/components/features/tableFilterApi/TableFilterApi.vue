@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import api from "../../entities/school-list-api";
 import TableFilter from "../../common/tableFilter/TableFilter.vue";
 import { tFederals, tFilerData, tRegions } from "./types";
@@ -17,6 +17,7 @@ const error = ref<string | null>(null);
 async function getTableFilterData() {
   loading.value = true;
   error.value = null;
+
 
   try {
     const [responseRegions, responseFederals] = await Promise.all([
@@ -36,6 +37,7 @@ async function getTableFilterData() {
       regions: regions.value as tRegions[],
       federals: federals.value as tFederals[],
     };
+
   } catch (err: any) {
     error.value = err.message;
     console.error("ОШИБКА: ", err);
@@ -76,8 +78,8 @@ function handleStatusSelect(statusValue: string) {
 }
 
 function handleDataSelect(item: string) {
-  const regionId = regionsMap.value.get(item);
-  const federalId = federalsMap.value.get(item);
+  let regionId = regionsMap.value.get(item);
+  let federalId = federalsMap.value.get(item);
 
   if (regionId !== undefined) {
     filterContext.updateFilter("region_id", regionId);
@@ -86,15 +88,14 @@ function handleDataSelect(item: string) {
     filterContext.updateFilter("federal_district_id", federalId);
     filterContext.updateFilter("region_id", null);
   } else {
-    console.warn("Элемент не найден в картах:", item);
+    console.warn("Элемент не найден:", item);
   }
 }
 
-watch(
-  () => filterContext.filterState.value,
-  () => {},
-  { deep: true }, 
-);
+// watch(
+//   () => filterContext.filterState.value,
+//   () => {},
+// );
 
 onMounted(() => {
   getTableFilterData();
